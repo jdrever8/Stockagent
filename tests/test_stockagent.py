@@ -426,7 +426,7 @@ def test_isa_book_rules_costs_and_elimination(tmp_path, monkeypatch):
     assert e["costs"] == {"dealing": 0.0, "stamp_duty": 0.0, "fx": 0.0}      # UCITS ETF, GBP line
     with pytest.raises(ValueError, match="no shorting"):
         b.trade("sell", "TSLA", 1, price=250.0, source="t")
-    with pytest.raises(ValueError, match="no margin"):
+    with pytest.raises(ValueError, match="buying power"):
         b.trade("buy", "AAPL", 1000)
     with pytest.raises(ValueError, match="US-domiciled"):
         b.trade("buy", "SPY", 1, instrument="etf")
@@ -488,8 +488,8 @@ STRATS = ["momentum", "reversion", "passive"]
 def test_agent_rulebooks_daily_limit_and_params(tmp_path, monkeypatch):
     root = str(tmp_path / "game")
     game_mod.init_game(root)
-    with pytest.raises(PermissionError, match="from 2026-10-14"):
-        game_mod.amend_rules("momentum", [{"op": "add", "text": "x", "rationale": "y"}], root, today="2026-10-13")
+    with pytest.raises(PermissionError, match="from 2026-10-13"):
+        game_mod.amend_rules("momentum", [{"op": "add", "text": "x", "rationale": "y"}], root, today="2026-10-12")
     rules = game_mod.amend_rules("momentum", [
         {"op": "add", "text": "Concentrate in the top 2 on a 3-month lookback", "rationale": "faster turns",
          "params": {"top_n": 2, "lookback": 63}}], root, today="2026-10-14")
@@ -525,3 +525,40 @@ def test_strategies_follow_rule_params(tmp_path):
     assert list(targets) == [game_mod.MOMENTUM_UNIVERSE[-1]] and "63d" in why
     p = dict(game_mod.DEFAULT_PARAMS["momentum"], min_score=10.0)
     assert game_mod.strat_momentum(lambda s: series[s], book, p)[0] == {game_mod.SAFE: 1.0}
+
+
+def test_breakout_lets_an_agent_leave_the_isa_and_use_margin(tmp_path, monkeypatch):
+    prices = {"GBPUSD": 1.25, "LQQ3.L": 100.0, "TSLA": 250.0}
+    monkeypatch.setattr(book_mod, "fetch_quotes", fake_quotes(prices))
+    root = str(tmp_path / "game")
+    game_mod.init_game(root)
+    path = game_mod.book_path("speculative", root)
+    with pytest.raises(ValueError, match="no shorting"):
+        book_mod.Book(path).trade("sell", "TSLA", 1)
+    rules = game_mod.amend_rules("speculative", [
+        {"op": "add", "text": "Break out: leave the ISA and borrow up to 0.5x equity", "rationale": "more convexity",
+         "params": {"isa": False, "margin_ratio": 0.5, "margin_rate": 0.0525}}], root, today="2026-10-13")
+    assert "left the ISA wrapper" in " ".join(rules["active"][0]["breakout"])
+    b = book_mod.Book(path)
+    assert b.buying_power() == pytest.approx(15_000)
+    b.trade("buy", "LQQ3.L", 140, instrument="etp")                       # £14,000 on £10,000 equity
+    assert b.data["cash"] == pytest.approx(-4_000)
+    b.trade("sell", "TSLA", 2)                                            # shorting now allowed
+    assert b.data["positions"]["TSLA"]["qty"] == -2
+    # interest accrues on the margin loan
+    b.data["interest_accrued_to"] = "2026-10-01T00:00:00+00:00"
+    charged = b.accrue_interest("2026-10-11T00:00:00+00:00")
+    assert charged > 0 and b.data["interest_paid"] > 0
+    rows, text = game_mod.leaderboard(root)
+    assert "broke out" in text
+    # breakout switches are not strategy parameters, and others' books are untouched
+    assert "isa" not in game_mod.active_params("speculative", root)
+    assert book_mod.Book(game_mod.book_path("macro", root)).data["isa"] is True
+
+
+def test_reversion_idle_asset_parks_unused_cash():
+    up = [100 + i * 0.2 for i in range(250)]
+    book = type("B", (), {"data": {"positions": {"CSH2.L": {"qty": 5, "cost_base": 6000}}, "trades": []}})()
+    p = dict(game_mod.DEFAULT_PARAMS["reversion"], idle_asset="CSH2.L")
+    targets, why, inst = game_mod.strat_reversion(lambda s: up, book, p)
+    assert targets == {"CSH2.L": 1.0} and inst["CSH2.L"] == "etf" and "idle 100%" in why

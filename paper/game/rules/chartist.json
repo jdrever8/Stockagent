@@ -1,0 +1,58 @@
+{
+ "agent": "chartist",
+ "amendments": [
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:05:23+00:00",
+   "changes": [
+    {
+     "id": "CHA-1",
+     "adopted": "2026-10-13",
+     "text": "Exit on a close below the 50-day average or -8% from entry",
+     "params": {},
+     "rationale": "Formalises the opening exit rule; small, fast losses are what make breakout trading pay",
+     "op": "add"
+    },
+    {
+     "id": "CHA-2",
+     "adopted": "2026-10-13",
+     "text": "Once a trade is +10%, move the stop to entry +2%, then trail 8% below the highest close",
+     "params": {},
+     "rationale": "Locks in winners without capping the runs that pay for all the failed breakouts",
+     "op": "add"
+    },
+    {
+     "id": "CHA-3",
+     "adopted": "2026-10-13",
+     "text": "New entries only on 20-day breakouts with volume at least 1.2x the 50-day average and RSI(14) below 75",
+     "params": {},
+     "rationale": "Volume confirms real demand; very high RSI breakouts tend to be exhausted",
+     "op": "add"
+    }
+   ]
+  }
+ ],
+ "active": [
+  {
+   "id": "CHA-1",
+   "adopted": "2026-10-13",
+   "text": "Exit on a close below the 50-day average or -8% from entry",
+   "params": {},
+   "rationale": "Formalises the opening exit rule; small, fast losses are what make breakout trading pay"
+  },
+  {
+   "id": "CHA-2",
+   "adopted": "2026-10-13",
+   "text": "Once a trade is +10%, move the stop to entry +2%, then trail 8% below the highest close",
+   "params": {},
+   "rationale": "Locks in winners without capping the runs that pay for all the failed breakouts"
+  },
+  {
+   "id": "CHA-3",
+   "adopted": "2026-10-13",
+   "text": "New entries only on 20-day breakouts with volume at least 1.2x the 50-day average and RSI(14) below 75",
+   "params": {},
+   "rationale": "Volume confirms real demand; very high RSI breakouts tend to be exhausted"
+  }
+ ]
+}

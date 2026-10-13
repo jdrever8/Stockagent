@@ -35,3 +35,9 @@ buy 32 SGLN.L @ 61.0184 GBP = £1,952.59 (costs {'dealing': 0.0, 'stamp_duty': 0
 
 ## 2026-10-13T14:43:34+00:00
 buy 186 IGLT.L @ 9.4950 GBP = £1,766.07 (costs {'dealing': 0.0, 'stamp_duty': 0.0, 'fx': 0.0})
+
+## 2026-10-13T16:05:23+00:00
+Rulebook amendment:
+- add CON-1: Scale in once: add 5% of equity if a holding falls a further 15% with its thesis intact  (why: Contrarian entries are rarely at the bottom; pre-planned averaging turns early entries into an advantage)
+- add CON-2: Sell half at +25%, the rest when the narrative turns consensus-positive  (why: The edge is buying pessimism; it is gone once the crowd agrees, so harvest it)
+- add CON-3: Never buy a company with negative free cash flow and rising net debt  (why: Separates hated-but-sound from broken (the Oracle rule); value traps are the contrarian's main risk)

@@ -123,7 +123,7 @@ DEFAULT_PARAMS: Dict[str, Dict[str, object]] = {
     "momentum": {"universe": MOMENTUM_UNIVERSE, "safe": SAFE, "top_n": 3, "lookback": 126, "skip": 5,
                  "min_score": 0.0, "tolerance": 0.10},
     "reversion": {"universe": REVERSION_UNIVERSE, "rsi_len": 2, "rsi_entry": 10.0, "trend_len": 200,
-                  "exit_len": 5, "max_positions": 5, "stop_loss": None, "tolerance": 0.10},
+                  "exit_len": 5, "max_positions": 5, "stop_loss": None, "tolerance": 0.10, "idle_asset": None},
     "passive": {"holding": GLOBAL_TRACKER, "tolerance": 0.10},
 }
 
@@ -147,6 +147,8 @@ def strat_reversion(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float
     weight = 1.0 / int(p["max_positions"])
     keep, notes = {}, []
     for sym, pos in book.data["positions"].items():
+        if sym == p.get("idle_asset"):
+            continue
         closes = hist(sym)
         m_exit = sma(closes, int(p["exit_len"]))
         avg_cost = pos["cost_base"] / pos["qty"] if pos["qty"] else 0
@@ -167,7 +169,14 @@ def strat_reversion(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float
     for r, sym in sorted(candidates)[: max(0, int(p["max_positions"]) - len(keep))]:
         keep[sym] = weight
         notes.append(f"enter {sym}: RSI{p['rsi_len']} {r:.1f}, above {p['trend_len']}d")
-    return keep, "; ".join(notes) or "no signals", "share"
+    instruments = {s: "share" for s in keep}
+    idle = p.get("idle_asset")
+    if idle:   # park whatever the signals don't use; sold first when room is needed
+        keep.pop(idle, None)
+        keep[idle] = max(0.0, 1.0 - sum(keep.values()))
+        instruments[idle] = "etf"
+        notes.append(f"idle {keep[idle]:.0%} in {idle}")
+    return keep, "; ".join(notes) or "no signals", instruments
 
 
 def strat_passive(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float], str, str]:
@@ -187,6 +196,10 @@ def rebalance(book: Book, targets: Dict[str, Optional[float]], prices: Dict[str,
               instrument: str, reason: str, trade: Optional[Callable] = None, tolerance: float = 0.10) -> List[dict]:
     trade = trade or book.trade
     d = book.data
+
+    def inst_of(sym: str) -> str:
+        return instrument.get(sym, "share") if isinstance(instrument, dict) else instrument
+
     pos = d["positions"]
     equity = d["cash"] + sum(p["qty"] * prices[s] * fx[s] for s, p in pos.items())
     budget = equity * 0.995  # leave room for stamp duty / FX costs
@@ -199,7 +212,8 @@ def rebalance(book: Book, targets: Dict[str, Optional[float]], prices: Dict[str,
         unit = prices[sym] * fx[sym]
         target_qty = math.floor(budget * w / unit)
         if p["qty"] - target_qty > 0 and (w == 0 or (p["qty"] - target_qty) * unit > tolerance * budget * w):
-            done.append(trade("sell", sym, p["qty"] - target_qty, note=reason, instrument=p.get("instrument", instrument)))
+            done.append(trade("sell", sym, p["qty"] - target_qty, note=reason,
+                              instrument=p.get("instrument", inst_of(sym))))
     # buys
     for sym, w in targets.items():
         if not w:
@@ -212,7 +226,7 @@ def rebalance(book: Book, targets: Dict[str, Optional[float]], prices: Dict[str,
             affordable = math.floor((d["cash"] * 0.99) / unit)
             qty = min(gap, affordable)
             if qty > 0:
-                done.append(trade("buy", sym, qty, note=reason, instrument=instrument))
+                done.append(trade("buy", sym, qty, note=reason, instrument=inst_of(sym)))
     return done
 
 
@@ -284,6 +298,8 @@ def leaderboard(root: str = GAME_DIR, record: bool = True) -> Tuple[List[dict], 
     for i, r in enumerate(rows, 1):
         hold = ", ".join(p["symbol"] for p in r["positions"]) or "-"
         status = "ELIMINATED" if r.get("eliminated") else ("unpriced: " + ", ".join(r["unpriced"]) if r["unpriced"] else "active")
+        if r.get("breakouts") and not r.get("eliminated"):
+            status += " (broke out: " + "; ".join(r["breakouts"][-1]["changes"]) + ")"
         lines.append(f"| {i} | {r['agent']} | {r['kind']} | £{r['equity']:,.2f} | {r['return']:+.2%} | "
                      f"£{r['cash']:,.2f} | {hold} | {r['trades']} | {status} |")
     text = "\n".join(lines) + "\n"
@@ -292,12 +308,41 @@ def leaderboard(root: str = GAME_DIR, record: bool = True) -> Tuple[List[dict], 
     return rows, text
 
 
+# Breakouts: the owner allowed agents to break out of the house rules and control their own
+# destiny. These switches change what the ledger permits for that agent's own book only.
+BREAKOUT_KEYS = {"isa": bool, "margin_ratio": float, "margin_rate": float}
+
+
+def apply_breakout(name: str, params: dict, rule_id: str, root: str = GAME_DIR) -> List[str]:
+    book = Book(book_path(name, root))
+    d, notes = book.data, []
+    if "isa" in params and bool(params["isa"]) != bool(d.get("isa", True)):
+        d["isa"] = bool(params["isa"])
+        notes.append("left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)" if not d["isa"]
+                     else "returned to ISA rules")
+    if "margin_ratio" in params:
+        ratio = float(params["margin_ratio"])
+        if ratio < 0:
+            raise ValueError("margin_ratio must be >= 0")
+        d["margin_ratio"] = ratio
+        notes.append(f"margin up to {ratio:g}x equity" if ratio else "no margin")
+    if "margin_rate" in params:
+        d["margin_rate"] = float(params["margin_rate"])
+        notes.append(f"margin interest {d['margin_rate']:.2%}")
+    if notes:
+        book.accrue_interest()
+        d.setdefault("breakouts", []).append({"time": now(), "rule": rule_id, "changes": notes})
+        d["rules"] = "broke out of house rules: " + "; ".join(notes)
+        book.save()
+    return notes
+
+
 # ---------------------------------------------------------------------------
 # Agents' own rulebooks (owner's grant: from 14 Oct 2026, once a day, each agent may
 # create rules that help it gain an advantage). The owner's house rules are not part
 # of any rulebook: the ledger enforces them, so no agent rule can override them.
 # ---------------------------------------------------------------------------
-RULES_START = "2026-10-14"
+RULES_START = "2026-10-13"   # owner moved the first rules day to the day the game began
 
 
 def london_today() -> str:
@@ -324,7 +369,7 @@ def load_rules(name: str, root: str = GAME_DIR) -> dict:
 def active_params(name: str, root: str = GAME_DIR) -> dict:
     params = dict(DEFAULT_PARAMS.get(name, {}))
     for rule in load_rules(name, root)["active"]:
-        params.update(rule.get("params") or {})
+        params.update({k: v for k, v in (rule.get("params") or {}).items() if k not in BREAKOUT_KEYS})
     return params
 
 
@@ -354,15 +399,20 @@ def amend_rules(name: str, changes: List[dict], root: str = GAME_DIR, today: Opt
             if not ch.get("text") or not ch.get("rationale"):
                 raise ValueError("a new rule needs text and a rationale (the advantage it is meant to give)")
             params = ch.get("params") or {}
-            if params:
+            breakout = {k: v for k, v in params.items() if k in BREAKOUT_KEYS}
+            strategy_params = {k: v for k, v in params.items() if k not in BREAKOUT_KEYS}
+            if strategy_params:
                 if spec.kind != "systematic":
-                    raise ValueError("only systematic agents have code parameters; write the rule as text")
-                unknown = set(params) - set(DEFAULT_PARAMS[name])
+                    raise ValueError("only systematic agents have code parameters; write the rule as text "
+                                     f"(breakout switches {sorted(BREAKOUT_KEYS)} are open to every agent)")
+                unknown = set(strategy_params) - set(DEFAULT_PARAMS[name])
                 if unknown:
                     raise ValueError(f"unknown parameters {sorted(unknown)}; allowed {sorted(DEFAULT_PARAMS[name])}")
             rid = f"{name[:3].upper()}-{next_id}"
             next_id += 1
             rule = {"id": rid, "adopted": today, "text": ch["text"], "params": params, "rationale": ch["rationale"]}
+            if breakout:
+                rule["breakout"] = apply_breakout(name, breakout, rid, root)
             active[rid] = rule
             applied.append(dict(rule, op="add"))
         elif op == "retire":
@@ -389,7 +439,8 @@ def amend_rules(name: str, changes: List[dict], root: str = GAME_DIR, today: Opt
 def render_rulebooks(root: str = GAME_DIR) -> str:
     lines = ["# Agents' own rules", "",
              f"From {RULES_START}, once a day, each agent may add or retire its own rules to gain an advantage.",
-             "The owner's house rules (RULES.md) are enforced by the ledger and cannot be overridden.", ""]
+             "House rules (RULES.md) are the default. An agent may break out of them for its own book via",
+             f"breakout switches {sorted(BREAKOUT_KEYS)}; every breakout is logged and flagged on the leaderboard.", ""]
     for spec in ROSTER:
         rules = load_rules(spec.name, root)
         lines.append(f"## {spec.name} ({spec.kind})")

@@ -4,9 +4,9 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:39:27+00:00",
- "cash": 254.31640640338264,
+ "cash": -3596.203496652387,
  "fee_per_trade": 0.0,
- "isa": true,
+ "isa": false,
  "eliminated": null,
  "positions": {
   "LQQ3.L": {
@@ -22,8 +22,8 @@
    "instrument": "share"
   },
   "PLTR": {
-   "qty": 11.0,
-   "cost_base": 1723.17828286642,
+   "qty": 23.0,
+   "cost_base": 3601.2068133215485,
    "currency": "USD",
    "instrument": "share"
   },
@@ -34,8 +34,8 @@
    "instrument": "share"
   },
   "MSTR": {
-   "qty": 12.0,
-   "cost_base": 1402.0690175942004,
+   "qty": 29.0,
+   "cost_base": 3368.7902795762366,
    "currency": "USD",
    "instrument": "share"
   }
@@ -166,6 +166,48 @@
    "quote_time": "2026-10-13T14:40:13+00:00",
    "fx_source": "yahoo",
    "note": "deploy idle cash into strongest momentum name (+132% 6m); speculative book stays near fully invested"
+  },
+  {
+   "time": "2026-10-13T16:05:55+00:00",
+   "side": "buy",
+   "symbol": "MSTR",
+   "instrument": "share",
+   "qty": 17,
+   "price": 153.277,
+   "currency": "USD",
+   "fx_to_base": 0.754774,
+   "value_base": 1966.72,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 2.95
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T16:05:54+00:00",
+   "fx_source": "yahoo",
+   "note": "SPE-1/SPE-3: margin deployed into the two strongest 3-month trends (MSTR +59%, PLTR +55%)"
+  },
+  {
+   "time": "2026-10-13T16:05:56+00:00",
+   "side": "buy",
+   "symbol": "PLTR",
+   "instrument": "share",
+   "qty": 12,
+   "price": 207.35,
+   "currency": "USD",
+   "fx_to_base": 0.754774,
+   "value_base": 1878.03,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 2.82
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T16:05:39+00:00",
+   "fx_source": "yahoo",
+   "note": "SPE-1/SPE-3: margin deployed into the two strongest 3-month trends (MSTR +59%, PLTR +55%)"
   }
  ],
  "marks": [
@@ -183,7 +225,27 @@
    "time": "2026-10-13T14:44:01+00:00",
    "equity": 9992.46,
    "cash": 254.32
+  },
+  {
+   "time": "2026-10-13T16:06:17+00:00",
+   "equity": 9937.81,
+   "cash": -3596.2
   }
  ],
- "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice"
+ "rules": "broke out of house rules: left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed); margin up to 0.5x equity; margin interest 5.25%",
+ "margin_ratio": 0.5,
+ "margin_rate": 0.0525,
+ "interest_accrued_to": "2026-10-13T16:06:13+00:00",
+ "breakouts": [
+  {
+   "time": "2026-10-13T16:05:23+00:00",
+   "rule": "SPE-1",
+   "changes": [
+    "left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)",
+    "margin up to 0.5x equity",
+    "margin interest 5.25%"
+   ]
+  }
+ ],
+ "interest_paid": 0.0001
 }

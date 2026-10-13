@@ -2,10 +2,12 @@
 
 The owner checks in a couple of times a day. Each check-in runs these steps, in order:
 
-1. **Rules (first check-in of each UK day, from 14 Oct 2026).** Each agent reviews its results, its journal and the
+1. **Rules (first check-in of each UK day, from 13 Oct 2026).** Each agent reviews its results, its journal and the
    leaderboard, then may make one amendment to its own rulebook. Command:
    `python main.py game amend <agent> '<json>'`.
    Skipping is allowed. Rules must aim at an advantage and record why.
+   Breakout switches (`isa`, `margin_ratio`, `margin_rate`) are open to every agent.
+   Before trading, check any agent on margin against its own survival rules (for example SPE-2).
 2. **Systematic agents:** `python main.py game run`. Momentum, reversion and passive trade on their code using
    their active rule parameters.
 3. **Discretionary agents** (macro, quality, chartist, contrarian, speculative):
@@ -15,4 +17,5 @@ The owner checks in a couple of times a day. Each check-in runs these steps, in 
 4. **Leaderboard:** `python main.py game status`.
 5. **Commit and push** `paper/game/` to `claude/youthful-meitner-r4qqcu`.
 
-House rules: `RULES.md` (ISA-only, no margin, no shorting, no loans, zero funds loses). The ledger enforces them.
+House rules: `RULES.md`. They're the default for every agent unless it has broken out via its rulebook.
+Zero funds always loses.

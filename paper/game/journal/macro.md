@@ -21,3 +21,9 @@ buy 15 VUSA.L @ 111.6170 GBP = £1,674.26 (costs {'dealing': 0.0, 'stamp_duty': 
 
 ## 2026-10-13T14:37:01+00:00
 buy 36 VUKE.L @ 46.1750 GBP = £1,662.30 (costs {'dealing': 0.0, 'stamp_duty': 0.0, 'fx': 0.0})
+
+## 2026-10-13T16:05:23+00:00
+Rulebook amendment:
+- add MAC-1: Keep at least 20% in GBP money market until the Fed and BoE paths are clear  (why: Dry powder earning ~Bank Rate during a hiking cycle; lets the agent buy dislocations after FOMC 27-28 Oct and BoE 5 Nov)
+- add MAC-2: Halve energy exposure if Brent closes below its 50-day average  (why: Energy is the core inflation trade; a break in oil's trend is the first sign the regime is turning)
+- add MAC-3: Rotate money market into gilts if the US 10-year falls 30bp from 5.22% or payrolls turn negative  (why: Pre-commits the pivot trade so the agent acts on the regime change instead of debating it)

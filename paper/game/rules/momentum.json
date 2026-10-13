@@ -1,0 +1,70 @@
+{
+ "agent": "momentum",
+ "amendments": [
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:05:23+00:00",
+   "changes": [
+    {
+     "id": "MOM-1",
+     "adopted": "2026-10-13",
+     "text": "Hold money market (CSH2.L) instead of short gilts when nothing qualifies",
+     "params": {
+      "safe": "CSH2.L"
+     },
+     "rationale": "Gilts are losing value as yields rise (IGLS -1.9% 12m) while GBP money market earns ~Bank Rate (+4.2% 12m) with no duration risk",
+     "op": "add"
+    },
+    {
+     "id": "MOM-2",
+     "adopted": "2026-10-13",
+     "text": "Only hold an ETF whose momentum score exceeds +3%",
+     "params": {
+      "min_score": 0.03
+     },
+     "rationale": "Filters out noise-level trends that reverse and cost round-trip trades",
+     "op": "add"
+    },
+    {
+     "id": "MOM-3",
+     "adopted": "2026-10-13",
+     "text": "Rebalance only when a position drifts more than 15% from target",
+     "params": {
+      "tolerance": 0.15
+     },
+     "rationale": "Cuts turnover and costs; momentum edges are slow, so small drifts are not worth trading",
+     "op": "add"
+    }
+   ]
+  }
+ ],
+ "active": [
+  {
+   "id": "MOM-1",
+   "adopted": "2026-10-13",
+   "text": "Hold money market (CSH2.L) instead of short gilts when nothing qualifies",
+   "params": {
+    "safe": "CSH2.L"
+   },
+   "rationale": "Gilts are losing value as yields rise (IGLS -1.9% 12m) while GBP money market earns ~Bank Rate (+4.2% 12m) with no duration risk"
+  },
+  {
+   "id": "MOM-2",
+   "adopted": "2026-10-13",
+   "text": "Only hold an ETF whose momentum score exceeds +3%",
+   "params": {
+    "min_score": 0.03
+   },
+   "rationale": "Filters out noise-level trends that reverse and cost round-trip trades"
+  },
+  {
+   "id": "MOM-3",
+   "adopted": "2026-10-13",
+   "text": "Rebalance only when a position drifts more than 15% from target",
+   "params": {
+    "tolerance": 0.15
+   },
+   "rationale": "Cuts turnover and costs; momentum edges are slow, so small drifts are not worth trading"
+  }
+ ]
+}

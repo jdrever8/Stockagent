@@ -21,3 +21,9 @@ buy 22 LSEG.L @ 82.4400 GBP = £1,813.68 (costs {'dealing': 0.0, 'stamp_duty': 9
 
 ## 2026-10-13T14:37:07+00:00
 buy 7 GOOGL @ 353.6150 USD = £1,868.86 (costs {'dealing': 0.0, 'stamp_duty': 0.0, 'fx': 2.8})
+
+## 2026-10-13T16:05:23+00:00
+Rulebook amendment:
+- add QUA-1: No single holding above 25% of the book  (why: Concentration is the edge, but one AI-disruption headline should not decide the game)
+- add QUA-2: Add up to 5% of equity to a holding that is 10% or more below cost when no thesis-breaking news exists (once per name per week)  (why: Quality compounders de-rated on sentiment are the opportunity; averaging down on noise compounds the edge)
+- add QUA-3: Sell only on a thesis break (organic growth or margins deteriorating in results), never on price alone  (why: Avoids panic-selling exactly when the market offers quality cheaply)

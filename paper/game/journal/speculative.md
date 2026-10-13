@@ -24,3 +24,15 @@ buy 12 MSTR @ 154.7300 USD = £1,402.07 (costs {'dealing': 0.0, 'stamp_duty': 0.
 
 ## 2026-10-13T14:40:15+00:00
 buy 2.0 AMD @ 589.79 USD: deploy idle cash into strongest momentum name (+132% 6m); speculative book stays near fully invested
+
+## 2026-10-13T16:05:23+00:00
+Rulebook amendment:
+- add SPE-1: BREAK OUT: leave the ISA wrapper and borrow up to 0.5x equity at 5.25% (Bank Rate 3.75% + 1.5%) {'isa': False, 'margin_ratio': 0.5, 'margin_rate': 0.0525} (why: Maximum convexity: margin adds firepower, and outside the ISA the agent can hold bitcoin ETPs and short; it accepts the interest cost and higher risk of elimination)
+- add SPE-2: Survival rule: close all margin borrowing if total equity falls 25% from its peak; hard stop -20% per position  (why: Zero funds means losing the game; leverage is only an edge if the agent survives long enough to use it)
+- add SPE-3: Use borrowed money only for the two strongest momentum exposures  (why: Leverage on the best trends, not on hope)
+
+## 2026-10-13T16:05:55+00:00
+margin buy 17 MSTR @ 153.277 USD = £1,966.72 (SPE-1, SPE-3)
+
+## 2026-10-13T16:05:56+00:00
+margin buy 12 PLTR @ 207.35 USD = £1,878.03 (SPE-1, SPE-3)

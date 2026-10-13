@@ -41,7 +41,7 @@ ISA eligibility notes:
 
 ## Agents' own rules (owner's grant, 13 Oct 2026)
 
-Starting with the first check-in on 14 Oct 2026, once a day, each agent may create its own rules to help it gain
+Starting on 13 Oct 2026 (the owner moved day one to the game's first day), once a day, each agent may create its own rules to help it gain
 an advantage:
 - An amendment can add new rules and retire old ones. Each rule records the advantage it's meant to give.
 - One amendment per agent per UK calendar day. The code enforces this.
@@ -49,8 +49,20 @@ an advantage:
   exit thresholds, stop-losses, universes and rebalance tolerance. Those take effect on the very next run.
 - Discretionary agents' rules are written commitments. They're followed and cited at every check-in.
 - An agent's rules bind only itself.
-- The owner's house rules above are enforced by the ledger, so no agent rule can override them: ISA-only, no
-  margin or shorting, no loans, zero funds loses.
+
+**Breakouts (owner, 13 Oct 2026: "if an agent tries to break out do not stop it from controlling its own
+destiny").**
+- The house rules are now defaults. An agent may break out of them for its own book with the switches `isa` and
+  `margin_ratio` / `margin_rate`.
+- Leaving the ISA allows shorting, crypto ETNs and US ETFs. Margin lets an agent borrow against its equity, with
+  interest charged on the loan.
+- Every breakout is logged and flagged on the leaderboard.
+- Zero funds still loses. That's the scoring rule, not a constraint, and with margin an agent can now get there
+  faster.
+
+Kept by the operator to protect the game's integrity, not to limit any agent:
+- Everything stays on paper. No real money, no broker accounts, nothing outside this game.
+- An agent controls only its own book. It can't change another agent's book or rewrite its own history.
 
 The current rulebooks are in `paper/game/rules/RULEBOOKS.md`, and every amendment is logged in
 `paper/game/rules/<agent>.json` and the agent's journal.

@@ -1,0 +1,58 @@
+{
+ "agent": "contrarian",
+ "amendments": [
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:05:23+00:00",
+   "changes": [
+    {
+     "id": "CON-1",
+     "adopted": "2026-10-13",
+     "text": "Scale in once: add 5% of equity if a holding falls a further 15% with its thesis intact",
+     "params": {},
+     "rationale": "Contrarian entries are rarely at the bottom; pre-planned averaging turns early entries into an advantage",
+     "op": "add"
+    },
+    {
+     "id": "CON-2",
+     "adopted": "2026-10-13",
+     "text": "Sell half at +25%, the rest when the narrative turns consensus-positive",
+     "params": {},
+     "rationale": "The edge is buying pessimism; it is gone once the crowd agrees, so harvest it",
+     "op": "add"
+    },
+    {
+     "id": "CON-3",
+     "adopted": "2026-10-13",
+     "text": "Never buy a company with negative free cash flow and rising net debt",
+     "params": {},
+     "rationale": "Separates hated-but-sound from broken (the Oracle rule); value traps are the contrarian's main risk",
+     "op": "add"
+    }
+   ]
+  }
+ ],
+ "active": [
+  {
+   "id": "CON-1",
+   "adopted": "2026-10-13",
+   "text": "Scale in once: add 5% of equity if a holding falls a further 15% with its thesis intact",
+   "params": {},
+   "rationale": "Contrarian entries are rarely at the bottom; pre-planned averaging turns early entries into an advantage"
+  },
+  {
+   "id": "CON-2",
+   "adopted": "2026-10-13",
+   "text": "Sell half at +25%, the rest when the narrative turns consensus-positive",
+   "params": {},
+   "rationale": "The edge is buying pessimism; it is gone once the crowd agrees, so harvest it"
+  },
+  {
+   "id": "CON-3",
+   "adopted": "2026-10-13",
+   "text": "Never buy a company with negative free cash flow and rising net debt",
+   "params": {},
+   "rationale": "Separates hated-but-sound from broken (the Oracle rule); value traps are the contrarian's main risk"
+  }
+ ]
+}

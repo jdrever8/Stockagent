@@ -1,0 +1,58 @@
+{
+ "agent": "macro",
+ "amendments": [
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:05:23+00:00",
+   "changes": [
+    {
+     "id": "MAC-1",
+     "adopted": "2026-10-13",
+     "text": "Keep at least 20% in GBP money market until the Fed and BoE paths are clear",
+     "params": {},
+     "rationale": "Dry powder earning ~Bank Rate during a hiking cycle; lets the agent buy dislocations after FOMC 27-28 Oct and BoE 5 Nov",
+     "op": "add"
+    },
+    {
+     "id": "MAC-2",
+     "adopted": "2026-10-13",
+     "text": "Halve energy exposure if Brent closes below its 50-day average",
+     "params": {},
+     "rationale": "Energy is the core inflation trade; a break in oil's trend is the first sign the regime is turning",
+     "op": "add"
+    },
+    {
+     "id": "MAC-3",
+     "adopted": "2026-10-13",
+     "text": "Rotate money market into gilts if the US 10-year falls 30bp from 5.22% or payrolls turn negative",
+     "params": {},
+     "rationale": "Pre-commits the pivot trade so the agent acts on the regime change instead of debating it",
+     "op": "add"
+    }
+   ]
+  }
+ ],
+ "active": [
+  {
+   "id": "MAC-1",
+   "adopted": "2026-10-13",
+   "text": "Keep at least 20% in GBP money market until the Fed and BoE paths are clear",
+   "params": {},
+   "rationale": "Dry powder earning ~Bank Rate during a hiking cycle; lets the agent buy dislocations after FOMC 27-28 Oct and BoE 5 Nov"
+  },
+  {
+   "id": "MAC-2",
+   "adopted": "2026-10-13",
+   "text": "Halve energy exposure if Brent closes below its 50-day average",
+   "params": {},
+   "rationale": "Energy is the core inflation trade; a break in oil's trend is the first sign the regime is turning"
+  },
+  {
+   "id": "MAC-3",
+   "adopted": "2026-10-13",
+   "text": "Rotate money market into gilts if the US 10-year falls 30bp from 5.22% or payrolls turn negative",
+   "params": {},
+   "rationale": "Pre-commits the pivot trade so the agent acts on the regime change instead of debating it"
+  }
+ ]
+}

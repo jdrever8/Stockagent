@@ -7,3 +7,10 @@ Started 2026-10-13T14:29:58+00:00 with £10,000.
 ## 2026-10-13T14:35:12+00:00
 Signal: day one: buy the world and hold
 Trades: buy 67 VWRP.L @ 146.04
+
+## 2026-10-13T16:05:23+00:00
+Rules day 1: passive declines to adopt any rules. Its edge is doing nothing: minimal costs, no behavioural errors. As the control it stays untouched.
+
+## 2026-10-13T16:05:46+00:00
+Signal: hold forever
+Trades: none

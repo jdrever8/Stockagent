@@ -1,0 +1,58 @@
+{
+ "agent": "quality",
+ "amendments": [
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:05:23+00:00",
+   "changes": [
+    {
+     "id": "QUA-1",
+     "adopted": "2026-10-13",
+     "text": "No single holding above 25% of the book",
+     "params": {},
+     "rationale": "Concentration is the edge, but one AI-disruption headline should not decide the game",
+     "op": "add"
+    },
+    {
+     "id": "QUA-2",
+     "adopted": "2026-10-13",
+     "text": "Add up to 5% of equity to a holding that is 10% or more below cost when no thesis-breaking news exists (once per name per week)",
+     "params": {},
+     "rationale": "Quality compounders de-rated on sentiment are the opportunity; averaging down on noise compounds the edge",
+     "op": "add"
+    },
+    {
+     "id": "QUA-3",
+     "adopted": "2026-10-13",
+     "text": "Sell only on a thesis break (organic growth or margins deteriorating in results), never on price alone",
+     "params": {},
+     "rationale": "Avoids panic-selling exactly when the market offers quality cheaply",
+     "op": "add"
+    }
+   ]
+  }
+ ],
+ "active": [
+  {
+   "id": "QUA-1",
+   "adopted": "2026-10-13",
+   "text": "No single holding above 25% of the book",
+   "params": {},
+   "rationale": "Concentration is the edge, but one AI-disruption headline should not decide the game"
+  },
+  {
+   "id": "QUA-2",
+   "adopted": "2026-10-13",
+   "text": "Add up to 5% of equity to a holding that is 10% or more below cost when no thesis-breaking news exists (once per name per week)",
+   "params": {},
+   "rationale": "Quality compounders de-rated on sentiment are the opportunity; averaging down on noise compounds the edge"
+  },
+  {
+   "id": "QUA-3",
+   "adopted": "2026-10-13",
+   "text": "Sell only on a thesis break (organic growth or margins deteriorating in results), never on price alone",
+   "params": {},
+   "rationale": "Avoids panic-selling exactly when the market offers quality cheaply"
+  }
+ ]
+}

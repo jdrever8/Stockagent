@@ -21,3 +21,9 @@ buy 172 SGE.L @ 10.8200 GBP = £1,861.04 (costs {'dealing': 0.0, 'stamp_duty': 9
 
 ## 2026-10-13T14:37:13+00:00
 buy 4 MSFT @ 547.8300 USD = £1,654.45 (costs {'dealing': 0.0, 'stamp_duty': 0.0, 'fx': 2.48})
+
+## 2026-10-13T16:05:23+00:00
+Rulebook amendment:
+- add CHA-1: Exit on a close below the 50-day average or -8% from entry  (why: Formalises the opening exit rule; small, fast losses are what make breakout trading pay)
+- add CHA-2: Once a trade is +10%, move the stop to entry +2%, then trail 8% below the highest close  (why: Locks in winners without capping the runs that pay for all the failed breakouts)
+- add CHA-3: New entries only on 20-day breakouts with volume at least 1.2x the 50-day average and RSI(14) below 75  (why: Volume confirms real demand; very high RSI breakouts tend to be exhausted)

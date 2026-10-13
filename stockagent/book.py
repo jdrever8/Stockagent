@@ -199,6 +199,7 @@ class Book:
         side, symbol = side.lower(), symbol.upper()
         if d.get("eliminated"):
             raise PermissionError(f"{d['owner']} was eliminated on {d['eliminated']}")
+        self.accrue_interest()
         if side not in ("buy", "sell"):
             raise ValueError("side must be buy or sell")
         if qty <= 0:
@@ -229,10 +230,12 @@ class Book:
         value = qty * price * rate
         fee = costs(side, symbol, instrument, value, ccy, d["base"], float(d.get("fee_per_trade", 0.0)))
         total_fee = round(sum(fee.values()), 2)
-        if side == "buy" and value + total_fee > d["cash"] + 1e-9:
-            max_qty = max(0.0, (d["cash"] - total_fee) / (price * rate))
-            raise ValueError(f"buy needs {value + total_fee:,.2f} {d['base']} but cash is {d['cash']:,.2f} "
-                             f"(no margin); max quantity about {max_qty:.4f}")
+        power = self.buying_power()
+        if side == "buy" and value + total_fee > power + 1e-9:
+            max_qty = max(0.0, (power - total_fee) / (price * rate))
+            raise ValueError(f"buy needs {value + total_fee:,.2f} {d['base']} but buying power is {power:,.2f} "
+                             f"(cash {d['cash']:,.2f}, margin ratio {d.get('margin_ratio', 0)}); "
+                             f"max quantity about {max_qty:.4f}")
         pos = d["positions"].setdefault(symbol, {"qty": 0.0, "cost_base": 0.0, "currency": ccy,
                                                   "instrument": instrument})
         signed = qty if side == "buy" else -qty
@@ -261,9 +264,40 @@ class Book:
         self.save()
         return entry
 
+    # --- margin (only after an agent breaks out of the no-margin house rule) ---
+    def equity_at_cost(self) -> float:
+        d = self.data
+        return d["cash"] + sum(p["cost_base"] if p["qty"] > 0 else -p["cost_base"] for p in d["positions"].values())
+
+    def buying_power(self) -> float:
+        """Cash, plus borrowing up to margin_ratio x equity when the agent has broken out."""
+        d = self.data
+        ratio = float(d.get("margin_ratio", 0.0))
+        if ratio <= 0:
+            return d["cash"]
+        return d["cash"] + max(0.0, ratio * self.equity_at_cost())
+
+    def accrue_interest(self, at: Optional[str] = None) -> float:
+        """Charge interest on a negative cash balance (margin loan) since the last accrual."""
+        d = self.data
+        at = at or now()
+        last = d.get("interest_accrued_to") or at
+        d["interest_accrued_to"] = at
+        if d["cash"] >= 0 or not d.get("margin_ratio"):
+            return 0.0
+        days = (dt.datetime.fromisoformat(at) - dt.datetime.fromisoformat(last)).total_seconds() / 86400
+        charge = -d["cash"] * float(d.get("margin_rate", 0.0525)) * max(0.0, days) / 365
+        if charge > 0:
+            d["cash"] -= charge
+            d.setdefault("interest_paid", 0.0)
+            d["interest_paid"] = round(d["interest_paid"] + charge, 4)
+        return charge
+
     # --- valuation --------------------------------------------------------
     def mark(self, record: bool = True, manual_prices: Optional[Dict[str, float]] = None) -> dict:
         d = self.data
+        if not d.get("eliminated"):
+            self.accrue_interest()
         symbols = list(d["positions"])
         quotes = fetch_quotes(symbols + ["GBPUSD"]) if symbols else {}
         rows, total, missing = [], d["cash"], []
@@ -282,6 +316,7 @@ class Book:
         result = {"owner": d.get("owner"), "time": now(), "base": d["base"], "cash": round(d["cash"], 2),
                   "equity": round(total, 2), "return": total / d["start_capital"] - 1, "positions": rows,
                   "unpriced": missing, "trades": len(d["trades"]), "eliminated": d.get("eliminated"),
+                  "breakouts": d.get("breakouts", []), "interest_paid": d.get("interest_paid", 0.0),
                   "realised_pnl": round(sum(t.get("realised_pnl", 0) for t in d["trades"]), 2)}
         if not missing and total <= 0.005 and not d.get("eliminated"):
             d["eliminated"] = result["time"]          # zero funds: the agent loses
