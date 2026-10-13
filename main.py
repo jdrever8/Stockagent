@@ -111,6 +111,27 @@ def main(argv=None):
     q = bsub.add_parser("status")
     q.add_argument("--no-record", action="store_true")
 
+    p = sub.add_parser("game", help="ISA agent game: several agents, GBP 10k each, live prices on paper")
+    gsub = p.add_subparsers(dest="game_cmd", required=True)
+    gsub.add_parser("init")
+    gsub.add_parser("run", help="run systematic agents, then mark every book and write the leaderboard")
+    gsub.add_parser("status", help="mark every book and write the leaderboard")
+    q = gsub.add_parser("trade", help="trade a discretionary agent's book")
+    q.add_argument("agent")
+    q.add_argument("side", choices=["buy", "sell"])
+    q.add_argument("symbol")
+    q.add_argument("qty", type=float)
+    q.add_argument("--instrument", default="share",
+                   choices=["share", "etf", "investment_trust", "aim", "gilt", "foreign_share"])
+    q.add_argument("--note", default="")
+    q.add_argument("--price", type=float)
+    q.add_argument("--currency")
+    q.add_argument("--fx", type=float)
+    q.add_argument("--source")
+    q = gsub.add_parser("journal", help="append to an agent's journal")
+    q.add_argument("agent")
+    q.add_argument("text")
+
     p = sub.add_parser("live")
     p.add_argument("--champion", default="res/champion.json")
     p.add_argument("--state", default="res/live_state.json")
@@ -190,6 +211,24 @@ def main(argv=None):
             print(json.dumps(entry, indent=2))
         else:
             print(json.dumps(Book(a.path).mark(record=not a.no_record), indent=2))
+
+    elif a.cmd == "game":
+        from stockagent import game
+        if a.game_cmd == "init":
+            print("created:", game.init_game() or "nothing (already initialised)")
+        elif a.game_cmd in ("run", "status"):
+            if a.game_cmd == "run":
+                print(json.dumps(game.run_systematic(), indent=2))
+            print(game.leaderboard()[1])
+        elif a.game_cmd == "trade":
+            from stockagent.book import Book
+            entry = Book(game.book_path(a.agent)).trade(a.side, a.symbol, a.qty, price=a.price, source=a.source,
+                                                        fx=a.fx, note=a.note, instrument=a.instrument,
+                                                        currency=a.currency)
+            game.journal(a.agent, f"{a.side} {a.qty} {a.symbol} @ {entry['price']} {entry['currency']}: {a.note}")
+            print(json.dumps(entry, indent=2))
+        elif a.game_cmd == "journal":
+            game.journal(a.agent, a.text)
 
     elif a.cmd == "live":
         from stockagent.live.runner import live_step

@@ -397,44 +397,86 @@ def test_limit_overrides_cannot_change_budget():
     assert lim.budget == 10_000 and lim.max_position_pct == 1.0 and lim.max_orders_per_day == 10
 
 
-# --- agent paper book ------------------------------------------------------------
+# --- agent paper book / ISA game -------------------------------------------------
 from stockagent import book as book_mod  # noqa: E402
+from stockagent import game as game_mod  # noqa: E402
 
 
-def fake_quotes(prices):
+def fake_quotes(prices, ccy=None):
     def fetch(symbols):
         out = {}
         for s in symbols:
             s = s.upper()
             if s in prices:
-                ccy = "USD" if s == "GBPUSD" else book_mod.currency_of(s)
-                out[s] = book_mod.Quote(s, prices[s], ccy, "t", "test")
+                c = (ccy or {}).get(s) or ("USD" if s == "GBPUSD" or not s.endswith(".L") else "GBP")
+                out[s] = book_mod.Quote(s, prices[s], c, "t", "test")
         return out
     return fetch
 
 
-def test_book_gbp_ledger_with_fx_pence_and_shorts(tmp_path, monkeypatch):
-    prices = {"GBPUSD": 1.25, "AAPL": 200.0, "VOD.L": 0.80}
+def test_isa_book_rules_costs_and_elimination(tmp_path, monkeypatch):
+    prices = {"GBPUSD": 1.25, "AAPL": 200.0, "VOD.L": 0.80, "VUSA.L": 90.0}
     monkeypatch.setattr(book_mod, "fetch_quotes", fake_quotes(prices))
-    path = str(tmp_path / "b.json")
-    b = book_mod.Book.init(path, 10_000)
-    e = b.trade("buy", "AAPL", 10, note="test")
-    assert e["value_base"] == 1600.0 and b.data["cash"] == 8400.0          # 10 * 200 USD / 1.25
-    b.trade("buy", "VOD.L", 1000)                                          # 0.80 GBP each
-    assert b.data["cash"] == pytest.approx(7600.0)
-    with pytest.raises(ValueError):
-        b.trade("buy", "AAPL", 1000)                                       # budget is the only limit
-    b.trade("sell", "TSLA", 5, price=250.0, source="unit test", fx=0.8)   # short, manual price
-    assert b.data["positions"]["TSLA"]["qty"] == -5 and b.data["cash"] == pytest.approx(8600.0)
-    prices.update({"AAPL": 220.0, "TSLA": 200.0})
+    b = book_mod.Book.init(str(tmp_path / "b.json"), 10_000, isa=True)
+    e = b.trade("buy", "AAPL", 10, note="t")
+    assert e["value_base"] == 1600.0 and e["costs"]["fx"] == 2.4 and b.data["cash"] == pytest.approx(8397.6)
+    e = b.trade("buy", "VOD.L", 1000)
+    assert e["costs"]["stamp_duty"] == 4.0                                  # 0.5% SDRT on UK shares
+    e = b.trade("buy", "VUSA.L", 10, instrument="etf")
+    assert e["costs"] == {"dealing": 0.0, "stamp_duty": 0.0, "fx": 0.0}      # UCITS ETF, GBP line
+    with pytest.raises(ValueError, match="no shorting"):
+        b.trade("sell", "TSLA", 1, price=250.0, source="t")
+    with pytest.raises(ValueError, match="no margin"):
+        b.trade("buy", "AAPL", 1000)
+    with pytest.raises(ValueError, match="US-domiciled"):
+        b.trade("buy", "SPY", 1, instrument="etf")
+    prices["AAPL"] = 220.0
     m = b.mark()
     aapl = next(r for r in m["positions"] if r["symbol"] == "AAPL")
-    tsla = next(r for r in m["positions"] if r["symbol"] == "TSLA")
-    assert aapl["unrealised_pnl"] == pytest.approx(160.0)                   # +20 USD * 10 / 1.25
-    assert tsla["unrealised_pnl"] == pytest.approx(200.0)                   # short gained 50 USD*5 at 0.8
-    assert m["equity"] == pytest.approx(10_000 + 160 + 200 + 0)
+    assert aapl["unrealised_pnl"] == pytest.approx(160.0)
     e = b.trade("sell", "AAPL", 10)
-    assert e["realised_pnl"] == pytest.approx(160.0) and "AAPL" not in b.data["positions"]
-    assert len(book_mod.Book(path).data["trades"]) == 4
-    with pytest.raises(ValueError):
-        b.trade("buy", "MSFT", 1, price=100.0)                             # manual price needs a source
+    assert e["realised_pnl"] == pytest.approx(160.0 - 2.64) and "AAPL" not in b.data["positions"]
+    # zero funds = eliminated, and an eliminated agent cannot trade
+    b.data["cash"], b.data["positions"] = 0.0, {}
+    assert b.mark()["eliminated"]
+    with pytest.raises(PermissionError):
+        b.trade("buy", "VOD.L", 1)
+
+
+def test_indicators():
+    assert game_mod.sma([1, 2, 3, 4], 2) == 3.5 and game_mod.sma([1], 2) is None
+    assert game_mod.rsi([10, 9, 8]) == 0.0 and game_mod.rsi([1, 2, 3]) == 100.0
+
+
+def test_game_runs_systematic_agents(tmp_path, monkeypatch):
+    up = [100 + i * 0.5 for i in range(250)]
+    down = [200 - i * 0.3 for i in range(250)]
+    dip = [100 + i * 0.2 for i in range(245)] + [150, 149, 147, 144, 140]   # uptrend then sharp 2-day drop
+    series = {s: up for s in game_mod.MOMENTUM_UNIVERSE}
+    series.update({"VFEM.L": down, "VJPN.L": down, game_mod.GLOBAL_TRACKER: up, game_mod.SAFE: up})
+    series.update({s: up for s in game_mod.REVERSION_UNIVERSE})
+    series["AZN.L"] = dip
+    prices = {s: v[-1] for s, v in series.items()}
+    prices["GBPUSD"] = 1.25
+    quotes = fake_quotes(prices)
+    monkeypatch.setattr(book_mod, "fetch_quotes", quotes)
+    root = str(tmp_path / "game")
+    assert set(game_mod.init_game(root)) == {s.name for s in game_mod.ROSTER}
+    res = game_mod.run_systematic(root, history_fn=lambda s: series[s], quotes_fn=quotes)
+    assert all(r["status"] == "ok" for r in res.values()), res
+    pos = {n: set(book_mod.Book(game_mod.book_path(n, root)).data["positions"]) for n in STRATS}
+    assert pos["trend"] == {game_mod.GLOBAL_TRACKER} and pos["passive"] == {game_mod.GLOBAL_TRACKER}
+    assert len(pos["momentum"]) == 3 and not pos["momentum"] & {"VFEM.L", "VJPN.L"}
+    assert pos["reversion"] == {"AZN.L"}
+    # a second run with unchanged signals does not churn
+    before = {n: len(book_mod.Book(game_mod.book_path(n, root)).data["trades"]) for n in STRATS}
+    game_mod.run_systematic(root, history_fn=lambda s: series[s], quotes_fn=quotes)
+    after = {n: len(book_mod.Book(game_mod.book_path(n, root)).data["trades"]) for n in STRATS}
+    assert before == after
+    rows, text = game_mod.leaderboard(root)
+    assert len(rows) == len(game_mod.ROSTER) and "momentum" in text
+    for n in STRATS:
+        assert book_mod.Book(game_mod.book_path(n, root)).data["cash"] >= 0
+
+
+STRATS = ["momentum", "trend", "reversion", "passive"]

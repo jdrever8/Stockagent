@@ -1,0 +1,26 @@
+{
+ "owner": "chartist",
+ "strategy": "Technical swing trading: breakouts, support and resistance, moving averages, volume and momentum divergences, with disciplined exits.",
+ "base": "GBP",
+ "start_capital": 10000.0,
+ "created": "2026-10-13T14:29:58+00:00",
+ "cash": 10000.0,
+ "fee_per_trade": 0.0,
+ "isa": true,
+ "eliminated": null,
+ "positions": {},
+ "trades": [],
+ "marks": [
+  {
+   "time": "2026-10-13T14:30:08+00:00",
+   "equity": 10000.0,
+   "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:30:26+00:00",
+   "equity": 10000.0,
+   "cash": 10000.0
+  }
+ ],
+ "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice"
+}

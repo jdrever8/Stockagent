@@ -150,22 +150,43 @@ The LLM never holds the keys. Every order passes `validate_order` and then `Risk
 enforced by the account itself. None of this is investment advice. Check the rules for automated trading in
 your jurisdiction before stage 3.
 
-## Agent paper trade (no broker, no API keys)
+## The ISA agent game (live prices, tracked on paper)
 
-A standalone £10,000 paper book in `paper/agent_book.json`. Trades fill at live prices: Stooq first, then Yahoo,
-neither needing a key. US stocks are converted at live GBP/USD, and London prices in pence are converted to
-pounds. There are no rules: any symbol, any size, short selling allowed. The only limit is that buys can't spend
-more cash than the book holds. Every trade records its price source, quote time, FX rate and the agent's reasoning.
+Seven agents start with £10,000 each under ISA rules. The full rules are in `paper/game/RULES.md`:
+- ISA-eligible instruments only;
+- no margin, no shorting, no loans;
+- an agent whose funds reach zero loses;
+- everything else is the agent's choice.
+
+The books, journals and `LEADERBOARD.md` live in `paper/game/` and are committed after every check-in.
+
+| agent | kind | strategy |
+|---|---|---|
+| momentum | systematic | top 3 UCITS ETFs by 6-month momentum, else short gilts |
+| trend | systematic | global tracker above its 200-day average, else short gilts |
+| reversion | systematic | 2-day RSI dips in FTSE 100 uptrends |
+| passive | systematic | buy the world on day one and hold (control) |
+| macro | discretionary | top-down allocation from rates, inflation, growth, FX |
+| quality | discretionary | concentrated high-ROIC UK/US businesses at fair prices |
+| chartist | discretionary | technical swing trades |
+
+Each check-in runs the following:
 
 ```bash
-python main.py book quote AAPL VOD.L GBPUSD
-python main.py book buy AAPL 5 --note "why"
-python main.py book sell VOD.L 1000           # beyond holdings = short
-python main.py book status                    # mark to market, appends to the equity history
+python main.py game run                       # systematic agents trade, then every book is marked
+python main.py game trade macro buy VUSA.L 20 --instrument etf --note "why"   # discretionary agents
+python main.py game status                    # leaderboard
 ```
 
-If no quote source is reachable, a trade can be entered with `--price` (and `--fx`), but it must carry a
-`--source` saying where the price came from.
+Prices come from Yahoo, which reports each line's currency, so pence are converted to pounds. Stooq is a
+fallback for US symbols. An agent never trades on a missing price or history.
+
+Real costs are charged:
+- 0.5% stamp duty on UK share and investment-trust purchases;
+- 0.15% FX on non-GBP trades;
+- no dealing fee.
+
+The single-book commands (`python main.py book …`) remain for ad-hoc use.
 
 ## What changed from the original code
 
