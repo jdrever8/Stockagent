@@ -1,208 +1,153 @@
+"""StockAgent command line.
+
+  simulate   one simulated market (paper setup by default: 2 stocks, 3 sessions/day)
+  league     stage 1: competitive league across seeds; writes league.md / league.json
+  paper      stage 2: forward paper trading of candidates on real or replayed daily bars
+  promote    pick a champion from the paper league (writes champion.json for human sign-off)
+  live       stage 3: one daily step for the approved champion through Alpaca
+"""
+from __future__ import annotations
+
 import argparse
-import random
-import pandas as pd
-import openai
-import tiktoken
+import json
+import logging
+import sys
 
-import util
-from agent import Agent
-from secretary import Secretary
-from stock import Stock
-from log.custom_logger import log
-from record import create_stock_record, create_trade_record, AgentRecordDaily, create_agentses_record
+from stockagent.config import SimConfig
+from stockagent.league import QualifyRules, render_leaderboard, run_league
+from stockagent.simulation import Simulation, parse_population
 
-def get_agent(all_agents, order):
-    for agent in all_agents:
-        if agent.order == order:
-            return agent
-    return None
+DEFAULT_POPULATION = ("mock:trader=8,baseline:fundamental=8,baseline:trend=8,"
+                      "baseline:noise=8,baseline:buy_and_hold=8")
 
-def handle_action(action, stock_deals, all_agents, stock, session):
-    # action = JSON{"agent": 1, "action_type": "buy"|"sell", "stock": "A"|"B", "amount": 10, "price": 10}
-    try:
-        if action["action_type"] == "buy":
-            for sell_action in stock_deals["sell"][:]:
-                if action["price"] == sell_action["price"]:
-                    # 交易成交
-                    close_amount = min(action["amount"], sell_action["amount"])
-                    get_agent(all_agents, action["agent"]).buy_stock(stock.name, close_amount, action["price"])
-                    if not sell_action["agent"] == -1:  # B发行
-                        get_agent(all_agents, sell_action["agent"]).sell_stock(stock.name, close_amount, action["price"])
-                    stock.add_session_deal({"price": action["price"], "amount": close_amount})
-                    create_trade_record(action["date"], session, stock.name, action["agent"], sell_action["agent"],
-                                        close_amount, action["price"])
 
-                    if action["amount"] > close_amount:  # 买单未结束，卖单结束，继续循环
-                        log.logger.info(f"ACTION - BUY:{action['agent']}, SELL:{sell_action['agent']}, "
-                                        f"STOCK:{stock.name}, PRICE:{action['price']}, AMOUNT:{close_amount}")
-                        stock_deals["sell"].remove(sell_action)
-                        action["amount"] -= close_amount
-                    else:  # 卖单未结束，买单结束
-                        log.logger.info(f"ACTION - BUY:{action['agent']}, SELL:{sell_action['agent']}, "
-                                        f"STOCK:{stock.name}, PRICE:{action['price']}, AMOUNT:{close_amount}")
-                        sell_action["amount"] -= close_amount
-                        return
-            # 遍历卖单后仍然有剩余
-            stock_deals["buy"].append(action)
+def sim_config(a) -> SimConfig:
+    return SimConfig(stocks=a.stocks.split(","), days=a.days, sessions=a.sessions, seed=a.seed,
+                     out_dir=a.out, enable_bbs=not a.no_bbs, enable_reports=not a.no_reports,
+                     enable_loans=not a.no_loans, enable_events=not a.no_events,
+                     competitive=not a.cooperative)
 
+
+def add_sim_args(p):
+    p.add_argument("--population", default=DEFAULT_POPULATION,
+                   help="team=count list; team is provider:model or baseline:{fundamental,trend,noise,buy_and_hold}")
+    p.add_argument("--stocks", default="A,B", help="subset of A,B,C,D (paper uses A,B)")
+    p.add_argument("--days", type=int, default=10)
+    p.add_argument("--sessions", type=int, default=3)
+    p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--out", default="res")
+    p.add_argument("--temperature", type=float, default=None)
+    p.add_argument("--workers", type=int, default=8)
+    for flag in ("no-bbs", "no-reports", "no-loans", "no-events"):
+        p.add_argument(f"--{flag}", action="store_true", help="paper 5.5 ablation")
+    p.add_argument("--cooperative", action="store_true", help="do not tell agents they are competing")
+
+
+def make_feed(a, symbols=None):
+    from stockagent.live.feeds import AlpacaFeed, CSVFeed
+    if a.csv:
+        return CSVFeed(a.csv, anonymize=a.anonymize)
+    return AlpacaFeed(symbols or a.symbols.split(","))
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("-v", "--verbose", action="store_true")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+
+    p = sub.add_parser("simulate")
+    add_sim_args(p)
+
+    p = sub.add_parser("league")
+    add_sim_args(p)
+    p.add_argument("--seeds", default="42,128,256,512,1024")
+
+    for name in ("paper", "promote"):
+        p = sub.add_parser(name)
+        p.add_argument("--state", default="res/paper_league.json")
+        p.add_argument("--csv", help="replay bars from CSV (date,symbol,open,high,low,close,volume)")
+        p.add_argument("--anonymize", action="store_true", help="rename/rebase tickers for historical replay")
+        p.add_argument("--symbols", default="SPY,QQQ,IWM,TLT,GLD", help="Alpaca symbols for forward paper trading")
+        if name == "paper":
+            p.add_argument("--candidates", help="comma list of model[@Personality]; required for a new league")
+            p.add_argument("--capital", type=float, default=100_000)
+            p.add_argument("--temperature", type=float, default=None)
+            p.add_argument("--all", action="store_true", help="process every pending date (CSV replay)")
         else:
-            for buy_action in stock_deals["buy"][:]:
-                if action["price"] == buy_action["price"]:
-                    # 交易成交
-                    close_amount = min(action["amount"], buy_action["amount"])
-                    get_agent(all_agents, action["agent"]).sell_stock(stock.name, close_amount, action["price"])
-                    get_agent(all_agents, buy_action["agent"]).buy_stock(stock.name, close_amount, action["price"])
-                    stock.add_session_deal({"price": action["price"], "amount": close_amount})
-                    create_trade_record(action["date"], session, stock.name, buy_action["agent"], action["agent"],
-                                        close_amount, action["price"])
+            p.add_argument("--min-days", type=int, default=40)
+            p.add_argument("--out", default="res/champion.json")
 
-                    if action["amount"] > close_amount:  # 卖单未结束，买单结束，继续循环
-                        log.logger.info(f"ACTION - BUY:{buy_action['agent']}, SELL:{action['agent']}, "
-                                        f"STOCK:{stock.name}, PRICE:{action['price']}, AMOUNT:{close_amount}")
-                        stock_deals["buy"].remove(buy_action)
-                        action["amount"] -= close_amount
-                    else:  # 买单未结束，卖单结束
-                        log.logger.info(f"ACTION - BUY:{buy_action['agent']}, SELL:{action['agent']}, "
-                                        f"STOCK:{stock.name}, PRICE:{action['price']}, AMOUNT:{close_amount}")
-                        buy_action["amount"] -= close_amount
-                        return
-            stock_deals["sell"].append(action)
-    except Exception as e:
-        log.logger.error(f"handle_action error: {e}")
-        return
+    p = sub.add_parser("live")
+    p.add_argument("--champion", default="res/champion.json")
+    p.add_argument("--state", default="res/live_state.json")
+    p.add_argument("--symbols", default="SPY,QQQ,IWM,TLT,GLD")
+    p.add_argument("--budget", type=float, required=True)
+    p.add_argument("--real-money", action="store_true", help="use Alpaca live endpoint (needs sign-off)")
+    p.add_argument("--no-confirm", action="store_true", help="skip per-order confirmation")
+    p.add_argument("--csv", default=None)
+    p.add_argument("--anonymize", action="store_true")
 
+    a = ap.parse_args(argv)
+    logging.basicConfig(level=logging.INFO if a.verbose else logging.WARNING,
+                        format="%(asctime)s %(levelname)s %(message)s")
 
-def simulation(args):
-    # init
-    secretary = Secretary(args.model)
-    stock_a = Stock("A", util.STOCK_A_INITIAL_PRICE, 0, is_new=False)
-    #stock_b = Stock("B", util.STOCK_B_INITIAL_PRICE, util.STOCK_B_PUBLISH, is_new=True)
-    stock_b = Stock("B", util.STOCK_B_INITIAL_PRICE, 0, is_new=False)
-    all_agents = []
-    log.logger.debug("Agents initial...")
-    for i in range(0, util.AGENTS_NUM):  # agents start from 0, -1 refers to admin
-        agent = Agent(i, stock_a.get_price(), stock_b.get_price(), secretary, args.model)
-        all_agents.append(agent)
-        log.logger.debug("cash: {}, stock a: {}, stock b:{}, debt: {}".format(agent.cash, agent.stock_a_amount,
-                                                                              agent.stock_b_amount, agent.loans))
+    if a.cmd == "simulate":
+        result = Simulation(sim_config(a), parse_population(a.population), temperature=a.temperature,
+                            workers=a.workers).run()
+        print(render_leaderboard({"seeds": [a.seed], "best_baseline": None, "per_seed": [result],
+                                  "leaderboard": [dict(t, qualified=False, excess_vs_best_baseline_ci95=None)
+                                                  for t in result["teams"]]}))
+        print(f"outputs in {a.out}/")
 
-    # start simulation
-    last_day_forum_message = []
-    stock_a_deals = {"sell": [], "buy": []}
-    stock_b_deals = {"sell": [], "buy": []}
-    # stock b publish
-    # stock_b_deals["sell"].append({"agent": -1, "amount": util.STOCK_B_PUBLISH, "price": util.STOCK_B_INITIAL_PRICE})
+    elif a.cmd == "league":
+        report = run_league(sim_config(a), parse_population(a.population),
+                            [int(s) for s in a.seeds.split(",")], QualifyRules(),
+                            temperature=a.temperature, workers=a.workers)
+        print(render_leaderboard(report))
+        print("qualified for paper trading:", report["qualified"] or "none")
 
-    log.logger.debug("--------Simulation Start!--------")
-    for date in range(1, util.TOTAL_DATE + 1):
+    elif a.cmd == "paper":
+        from stockagent.live.runner import PaperLeague
+        feed = make_feed(a)
+        league = PaperLeague(a.state, feed, a.candidates.split(",") if a.candidates else None,
+                             capital=a.capital, temperature=a.temperature)
+        dates = league.pending_dates()
+        if not a.all:
+            dates = dates[-1:]
+        if not dates:
+            print("no new trading day to process")
+        board = None
+        for d in dates:
+            board = league.step(d)
+        if board:
+            print(json.dumps(board, indent=2))
 
-        log.logger.debug(f"--------DAY {date}---------")
-        # 除b发行外，删除前一天的所有交易
-        stock_a_deals["sell"].clear()
-        stock_a_deals["buy"].clear()
-        stock_b_deals["buy"].clear()
+    elif a.cmd == "promote":
+        from stockagent.live.runner import PaperLeague, PromotionRules
+        league = PaperLeague(a.state, make_feed(a))
+        champion = league.promote(PromotionRules(min_days=a.min_days), a.out)
+        print(json.dumps(league.leaderboard(), indent=2))
+        if champion:
+            print(f"\nchampion: {champion['candidate']} -> {a.out} (status awaiting_approval).\n"
+                  "To approve, a human edits approved_by and approved_budget in that file.")
+        else:
+            print("\nno candidate meets the promotion rules yet")
 
-        # tmp_action = next((action for action in stock_b_deals["sell"] if action["agent"] == -1), None)
-        stock_b_deals["sell"].clear()
-        # if tmp_action:
-        #     tmp_action["price"] *= 0.9  # B发行折价
-        #     if tmp_action["price"] < 1:
-        #         log.logger.warning("WARNING: STOCK B WITHDRAW FROM MARKET!!!")
-        #     stock_b_deals["sell"].append(tmp_action)
+    elif a.cmd == "live":
+        from stockagent.live.brokers import AlpacaBroker
+        from stockagent.live.runner import live_step
 
-        # check if an agent needs to repay loans
-        for agent in all_agents[:]:
-            agent.chat_history.clear()  # 只保存当天的聊天记录
-            agent.loan_repayment(date)
+        def confirm(order):
+            if a.no_confirm:
+                return True
+            reply = input(f"submit {order['action_type']} {order['amount']} {order['stock']} @ {order['price']}? [y/N] ")
+            return reply.strip().lower() == "y"
 
-        # repayment days
-        if date in util.REPAYMENT_DAYS:
-            for agent in all_agents[:]:
-                agent.interest_payment()
-
-        # deal with cash<0 agents
-        for agent in all_agents[:]:
-            if agent.is_bankrupt:
-                quit_sig = agent.bankrupt_process(stock_a.get_price(), stock_b.get_price())
-                if quit_sig:
-                    agent.quit = True
-                    all_agents.remove(agent)
-
-        # special events
-        if date == util.EVENT_1_DAY:
-            util.LOAN_RATE = util.EVENT_1_LOAN_RATE
-            last_day_forum_message.append({"name": -1, "message": util.EVENT_1_MESSAGE})
-        if date == util.EVENT_2_DAY:
-            util.LOAN_RATE = util.EVENT_2_LOAN_RATE
-            last_day_forum_message.append({"name": -1, "message": util.EVENT_2_MESSAGE})
-
-        # agent decide whether to loan
-        daily_agent_records = []
-        for agent in all_agents:
-            loan = agent.plan_loan(date, stock_a.get_price(), stock_b.get_price(), last_day_forum_message)
-            daily_agent_records.append(AgentRecordDaily(date, agent.order, loan))
-
-        for session in range(1, util.TOTAL_SESSION + 1):
-            log.logger.debug(f"SESSION {session}")
-            # 随机定义交易顺序
-            sequence = list(range(len(all_agents)))
-            random.shuffle(sequence)
-            for i in sequence:
-                agent = all_agents[i]
-                # if agent.is_bankrupt:  # cash<0的当天停止交易，交易时段结束后贩卖股票
-                #     continue
-
-                action = agent.plan_stock(date, session, stock_a, stock_b, stock_a_deals, stock_b_deals)
-                proper, cash, valua_a, value_b = agent.get_proper_cash_value(stock_a.get_price(), stock_b.get_price())
-                create_agentses_record(agent.order, date, session, proper, cash, valua_a, value_b, action)
-                action["agent"] = agent.order
-                action["date"] = date
-                if not action["action_type"] == "no":
-                    if action["stock"] == 'A':
-                        handle_action(action, stock_a_deals, all_agents, stock_a, session)
-                    else:
-                        handle_action(action, stock_b_deals, all_agents, stock_b, session)
-
-            # 交易时段结束，更新股票价格
-            stock_a.update_price(date)
-            stock_b.update_price(date)
-            create_stock_record(date, session, stock_a.get_price(), stock_b.get_price())
-
-
-        # agent预测明天行动
-        for idx, agent in enumerate(all_agents):
-            estimation = agent.next_day_estimate()
-            log.logger.info("Agent {} tomorrow estimation: {}".format(agent.order, estimation))
-            if idx >= len(daily_agent_records):
-                break
-            daily_agent_records[idx].add_estimate(estimation)
-            daily_agent_records[idx].write_to_excel()
-        daily_agent_records.clear()
-
-        # 交易日结束，论坛信息更新
-        last_day_forum_message.clear()
-        log.logger.debug(f"DAY {date} ends, display forum messages...")
-        for agent in all_agents:
-            chat_history = agent.chat_history
-            message = agent.post_message()
-            log.logger.info("Agent {} says: {}".format(agent.order, message))
-            last_day_forum_message.append({"name": agent.order, "message": message})
-
-
-
-    log.logger.debug("--------Simulation finished!--------")
-    log.logger.debug("--------Agents action history--------")
-    # for agent in all_agents:
-    #     log.logger.debug(f"Agent {agent.order} action history:")
-    #     log.logger.info(agent.action_history)
-    # log.logger.debug("--------Stock deal history--------")
-    # for stock in [stock_a, stock_b]:
-    #     log.logger.debug(f"Stock {stock.name} deal history:")
-    #     log.logger.info(stock.history)
+        broker = AlpacaBroker(live=a.real_money)
+        placed = live_step(a.champion, a.state, make_feed(a), broker, a.budget, confirm)
+        print(json.dumps(placed, indent=2, default=str))
+    return 0
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, default="gemini-pro", help="model name")
-    args = parser.parse_args()
-    simulation(args)
+    sys.exit(main())
