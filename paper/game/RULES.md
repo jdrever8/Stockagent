@@ -27,9 +27,12 @@ Mechanics that follow from these rules or from reality (not extra rules):
 - Every trade records its price source, quote time, FX rate and the agent's reasoning.
 
 Agents:
-- Systematic (code in `stockagent/game.py`): momentum, trend, reversion, passive.
-- Discretionary (run by the operating AI agent with research): macro, quality, chartist, speculative.
+- Systematic (code in `stockagent/game.py`): momentum, reversion, passive.
+- Discretionary (run by the operating AI agent with research): macro, quality, chartist, contrarian, speculative.
   Speculative was added on 2026-10-13 at the owner's request, with £10,000 under the same rules.
+  Also on 2026-10-13, 'trend' was converted to 'contrarian'. It was the agent most similar to another: it held
+  the same global tracker as passive. Its book carried over. The owner declared this the final change to the
+  roster.
 
 ISA eligibility notes:
 - 3× leveraged ETPs such as WisdomTree's LQQ3 are eligible.

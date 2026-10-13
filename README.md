@@ -163,12 +163,12 @@ The books, journals and `LEADERBOARD.md` live in `paper/game/` and are committed
 | agent | kind | strategy |
 |---|---|---|
 | momentum | systematic | top 3 UCITS ETFs by 6-month momentum, else short gilts |
-| trend | systematic | global tracker above its 200-day average, else short gilts |
 | reversion | systematic | 2-day RSI dips in FTSE 100 uptrends |
 | passive | systematic | buy the world on day one and hold (control) |
 | macro | discretionary | top-down allocation from rates, inflation, growth, FX |
 | quality | discretionary | concentrated high-ROIC UK/US businesses at fair prices |
 | chartist | discretionary | technical swing trades |
+| contrarian | discretionary | buys what the crowd hates where the business or asset is intact |
 | speculative | discretionary | leveraged ETPs, high-beta growth, bitcoin proxies, small caps |
 
 Each check-in runs the following:

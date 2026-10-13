@@ -1,0 +1,235 @@
+{
+ "owner": "contrarian",
+ "strategy": "Buy what the crowd hates: assets and sound businesses after heavy de-ratings, peak-pessimism downgrades or capitulation, avoiding genuinely broken balance sheets; sell into recovery once the consensus has come round.",
+ "base": "GBP",
+ "start_capital": 10000.0,
+ "created": "2026-10-13T14:29:58+00:00",
+ "cash": 578.9865191328647,
+ "fee_per_trade": 0.0,
+ "isa": true,
+ "eliminated": null,
+ "positions": {
+  "ADBE": {
+   "qty": 10.0,
+   "cost_base": 1796.7746808671347,
+   "currency": "USD",
+   "instrument": "share"
+  },
+  "III.L": {
+   "qty": 82.0,
+   "cost_base": 1965.54,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "AZN.L": {
+   "qty": 16.0,
+   "cost_base": 1913.92,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "SGLN.L": {
+   "qty": 32.0,
+   "cost_base": 1952.5888,
+   "currency": "GBP",
+   "instrument": "etf"
+  },
+  "IGLT.L": {
+   "qty": 186.0,
+   "cost_base": 1766.07,
+   "currency": "GBP",
+   "instrument": "etf"
+  }
+ },
+ "trades": [
+  {
+   "time": "2026-10-13T14:35:04+00:00",
+   "side": "buy",
+   "symbol": "VWRP.L",
+   "instrument": "etf",
+   "qty": 67,
+   "price": 146.06,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 9786.02,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:20:03+00:00",
+   "fx_source": "identity",
+   "note": "VWRP.L 146.06 above 200d 136.11: risk on"
+  },
+  {
+   "time": "2026-10-13T14:43:27+00:00",
+   "side": "sell",
+   "symbol": "VWRP.L",
+   "instrument": "etf",
+   "qty": 67.0,
+   "price": 146.0,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 9782.0,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": -4.02,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:28:27+00:00",
+   "fx_source": "identity",
+   "note": "contrarian conversion: exit the consensus global tracker"
+  },
+  {
+   "time": "2026-10-13T14:43:32+00:00",
+   "side": "buy",
+   "symbol": "ADBE",
+   "instrument": "share",
+   "qty": 10,
+   "price": 237.875,
+   "currency": "USD",
+   "fx_to_base": 0.755344,
+   "value_base": 1796.77,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 2.7
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:43:28+00:00",
+   "fx_source": "yahoo",
+   "note": "contrarian opening position (20% target)"
+  },
+  {
+   "time": "2026-10-13T14:43:32+00:00",
+   "side": "buy",
+   "symbol": "III.L",
+   "instrument": "share",
+   "qty": 82,
+   "price": 23.97,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1965.54,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 9.83,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:28:31+00:00",
+   "fx_source": "identity",
+   "note": "contrarian opening position (20% target)"
+  },
+  {
+   "time": "2026-10-13T14:43:33+00:00",
+   "side": "buy",
+   "symbol": "AZN.L",
+   "instrument": "share",
+   "qty": 16,
+   "price": 119.62,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1913.92,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 9.57,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:28:32+00:00",
+   "fx_source": "identity",
+   "note": "contrarian opening position (20% target)"
+  },
+  {
+   "time": "2026-10-13T14:43:33+00:00",
+   "side": "buy",
+   "symbol": "SGLN.L",
+   "instrument": "etf",
+   "qty": 32,
+   "price": 61.0184,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1952.59,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:27:46+00:00",
+   "fx_source": "identity",
+   "note": "contrarian opening position (20% target)"
+  },
+  {
+   "time": "2026-10-13T14:43:34+00:00",
+   "side": "buy",
+   "symbol": "IGLT.L",
+   "instrument": "etf",
+   "qty": 186,
+   "price": 9.495,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1766.07,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:28:26+00:00",
+   "fx_source": "identity",
+   "note": "contrarian opening position (18% target)"
+  }
+ ],
+ "marks": [
+  {
+   "time": "2026-10-13T14:30:08+00:00",
+   "equity": 10000.0,
+   "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:30:26+00:00",
+   "equity": 10000.0,
+   "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:35:15+00:00",
+   "equity": 9998.66,
+   "cash": 213.98
+  },
+  {
+   "time": "2026-10-13T14:37:22+00:00",
+   "equity": 9995.98,
+   "cash": 213.98
+  },
+  {
+   "time": "2026-10-13T14:39:51+00:00",
+   "equity": 9998.66,
+   "cash": 213.98
+  },
+  {
+   "time": "2026-10-13T14:40:19+00:00",
+   "equity": 10000.0,
+   "cash": 213.98
+  },
+  {
+   "time": "2026-10-13T14:43:58+00:00",
+   "equity": 9969.57,
+   "cash": 578.99
+  }
+ ],
+ "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice",
+ "converted": {
+  "from": "trend",
+  "time": "2026-10-13T14:43:27+00:00",
+  "reason": "owner replaced the agent most similar to another (trend held the same global tracker as passive)"
+ }
+}

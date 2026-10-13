@@ -34,9 +34,6 @@ ROSTER: List[AgentSpec] = [
     AgentSpec("momentum", "systematic",
               "Relative momentum across UCITS ETFs (US, UK, Europe, Japan, EM, gold, gilts, property): hold the "
               "top 3 by 6-month return skipping the last week, equal weight, only if positive; otherwise short gilts."),
-    AgentSpec("trend", "systematic",
-              "Trend filter: all-in a global all-cap tracker while it is above its 200-day average, "
-              "otherwise all-in short-dated gilts."),
     AgentSpec("reversion", "systematic",
               "Short-term mean reversion in FTSE 100 blue chips: buy 2-day RSI < 10 dips in stocks above their "
               "200-day average (max 5 at 20%), sell when the close recovers above the 5-day average."),
@@ -51,13 +48,17 @@ ROSTER: List[AgentSpec] = [
     AgentSpec("chartist", "discretionary",
               "Technical swing trading: breakouts, support and resistance, moving averages, volume and momentum "
               "divergences, with disciplined exits."),
+    AgentSpec("contrarian", "discretionary",
+              "Buy what the crowd hates: assets and sound businesses after heavy de-ratings, peak-pessimism "
+              "downgrades or capitulation, avoiding genuinely broken balance sheets; sell into recovery once "
+              "the consensus has come round."),
     AgentSpec("speculative", "discretionary",
               "Asymmetric, high-volatility bets for outsized returns: leveraged ETPs, high-beta growth and "
               "momentum names, bitcoin-proxy equities and small caps. Concentrated, cuts losers fast, lets "
               "winners run, rotates into whatever has the most upside."),
 ]
 
-GLOBAL_TRACKER = "VWRP.L"   # Vanguard FTSE All-World UCITS (accumulating, GBP line)
+GLOBAL_TRACKER = "VWRP.L"   # Vanguard FTSE All-World UCITS (accumulating, GBP line); passive's holding
 SAFE = "IGLS.L"             # iShares UK Gilts 0-5yr UCITS
 MOMENTUM_UNIVERSE = ["VUSA.L", "VUKE.L", "VMID.L", "VERX.L", "VJPN.L", "VFEM.L", "SGLN.L", "IGLT.L", "IUKP.L"]
 REVERSION_UNIVERSE = ["AZN.L", "SHEL.L", "HSBA.L", "ULVR.L", "BP.L", "GSK.L", "RIO.L", "DGE.L", "REL.L",
@@ -130,17 +131,6 @@ def strat_momentum(hist: History, book: Book) -> Tuple[Dict[str, float], str, st
     return {s: 1 / len(picks) for s in picks}, why + f" -> hold {picks}", "etf"
 
 
-def strat_trend(hist: History, book: Book) -> Tuple[Dict[str, float], str, str]:
-    closes = hist(GLOBAL_TRACKER)
-    avg = sma(closes, 200)
-    if avg is None:
-        return {}, "not enough history for a 200-day average", "etf"
-    last = closes[-1]
-    if last > avg:
-        return {GLOBAL_TRACKER: 1.0}, f"{GLOBAL_TRACKER} {last:.2f} above 200d {avg:.2f}: risk on", "etf"
-    return {SAFE: 1.0}, f"{GLOBAL_TRACKER} {last:.2f} below 200d {avg:.2f}: risk off", "etf"
-
-
 def strat_reversion(hist: History, book: Book) -> Tuple[Dict[str, float], str, str]:
     held = set(book.data["positions"])
     keep, notes = {}, []
@@ -171,7 +161,7 @@ def strat_passive(hist: History, book: Book) -> Tuple[Dict[str, float], str, str
     return {GLOBAL_TRACKER: 1.0}, "day one: buy the world and hold", "etf"
 
 
-STRATEGIES = {"momentum": strat_momentum, "trend": strat_trend, "reversion": strat_reversion,
+STRATEGIES = {"momentum": strat_momentum, "reversion": strat_reversion,
               "passive": strat_passive}
 
 

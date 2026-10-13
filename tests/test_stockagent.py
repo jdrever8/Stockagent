@@ -468,7 +468,7 @@ def test_game_runs_systematic_agents(tmp_path, monkeypatch):
     res = game_mod.run_systematic(root, history_fn=lambda s: series[s], quotes_fn=quotes)
     assert all(r["status"] == "ok" for r in res.values()), res
     pos = {n: set(book_mod.Book(game_mod.book_path(n, root)).data["positions"]) for n in STRATS}
-    assert pos["trend"] == {game_mod.GLOBAL_TRACKER} and pos["passive"] == {game_mod.GLOBAL_TRACKER}
+    assert pos["passive"] == {game_mod.GLOBAL_TRACKER}
     assert len(pos["momentum"]) == 3 and not pos["momentum"] & {"VFEM.L", "VJPN.L"}
     assert pos["reversion"] == {"AZN.L"}
     # a second run with unchanged signals does not churn
@@ -482,4 +482,4 @@ def test_game_runs_systematic_agents(tmp_path, monkeypatch):
         assert book_mod.Book(game_mod.book_path(n, root)).data["cash"] >= 0
 
 
-STRATS = ["momentum", "trend", "reversion", "passive"]
+STRATS = ["momentum", "reversion", "passive"]
