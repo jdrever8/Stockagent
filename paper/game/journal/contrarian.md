@@ -41,3 +41,15 @@ Rulebook amendment:
 - add CON-1: Scale in once: add 5% of equity if a holding falls a further 15% with its thesis intact  (why: Contrarian entries are rarely at the bottom; pre-planned averaging turns early entries into an advantage)
 - add CON-2: Sell half at +25%, the rest when the narrative turns consensus-positive  (why: The edge is buying pessimism; it is gone once the crowd agrees, so harvest it)
 - add CON-3: Never buy a company with negative free cash flow and rising net debt  (why: Separates hated-but-sound from broken (the Oracle rule); value traps are the contrarian's main risk)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add CON-4: Fade the game's own crowd: never hold an instrument that two or more other agents hold; prefer names no agent owns  (why: The other seven agents are the nearest crowd it can see; if they all agree, the edge is gone)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add CON-5: Sentiment gauge: only open a new position when a news search for the name in the past week is predominantly negative  (why: Measures pessimism directly instead of inferring it from price alone)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add CON-6: Every Monday, buy up to 5% of equity in the largest holding of the bottom-ranked agent, if the asset is not broken  (why: The game's worst performer is holding what has just been punished most: the purest contrarian signal available)

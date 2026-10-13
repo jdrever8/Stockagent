@@ -36,3 +36,24 @@ margin buy 17 MSTR @ 153.277 USD = £1,966.72 (SPE-1, SPE-3)
 
 ## 2026-10-13T16:05:56+00:00
 margin buy 12 PLTR @ 207.35 USD = £1,878.03 (SPE-1, SPE-3)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add SPE-4: Run a short book of up to 30% of equity in broken high-volatility names (below their 200-day average, 6-month return worse than -25%)  (why: Having left the ISA, shorts on collapsing momentum fund the longs and profit if the speculative froth keeps deflating)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add SPE-5: Pyramid winners: add with margin to any position up 20% from entry; never average down  (why: Convexity comes from pressing winners; adding to losers is how leveraged accounts reach zero)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add SPE-6: Crypto sleeve: up to 20% of equity in the iShares Bitcoin ETP (IB1T.L)  (why: Outside the ISA it can hold bitcoin directly rather than via MSTR; bitcoin is +34% over 3 months and is the purest high-beta asset available)
+
+## 2026-10-13T16:51:05+00:00
+sell 38 ASTS @ 47.74 USD = £1,369.66: SPE-4 short book: ASTS 6m -46%, 41% below its 200d average
+
+## 2026-10-13T16:51:07+00:00
+sell 58 OKLO @ 31.895 USD = £1,396.69: SPE-4 short book: OKLO 6m -45%, 45% below its 200d average
+
+## 2026-10-13T16:51:08+00:00
+buy 310 IB1T.L @ 6.286 GBP = £1,948.66: SPE-6 crypto sleeve: iShares Bitcoin ETP, +34% 3m (allowed after SPE-1 breakout)

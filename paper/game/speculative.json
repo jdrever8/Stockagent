@@ -4,7 +4,7 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:39:27+00:00",
- "cash": -3596.203496652387,
+ "cash": -2782.6801905113566,
  "fee_per_trade": 0.0,
  "isa": false,
  "eliminated": null,
@@ -38,6 +38,24 @@
    "cost_base": 3368.7902795762366,
    "currency": "USD",
    "instrument": "share"
+  },
+  "ASTS": {
+   "qty": -38.0,
+   "cost_base": 1369.6640241600605,
+   "currency": "USD",
+   "instrument": "share"
+  },
+  "OKLO": {
+   "qty": -58.0,
+   "cost_base": 1396.6855417138543,
+   "currency": "USD",
+   "instrument": "share"
+  },
+  "IB1T.L": {
+   "qty": 310.0,
+   "cost_base": 1948.6599999999999,
+   "currency": "GBP",
+   "instrument": "crypto_etn"
   }
  },
  "trades": [
@@ -208,6 +226,69 @@
    "quote_time": "2026-10-13T16:05:39+00:00",
    "fx_source": "yahoo",
    "note": "SPE-1/SPE-3: margin deployed into the two strongest 3-month trends (MSTR +59%, PLTR +55%)"
+  },
+  {
+   "time": "2026-10-13T16:51:05+00:00",
+   "side": "sell",
+   "symbol": "ASTS",
+   "instrument": "share",
+   "qty": 38,
+   "price": 47.74,
+   "currency": "USD",
+   "fx_to_base": 0.755002,
+   "value_base": 1369.66,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 2.05
+   },
+   "realised_pnl": -2.05,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T16:51:00+00:00",
+   "fx_source": "yahoo",
+   "note": "SPE-4 short book: ASTS 6m -46%, 41% below its 200d average"
+  },
+  {
+   "time": "2026-10-13T16:51:07+00:00",
+   "side": "sell",
+   "symbol": "OKLO",
+   "instrument": "share",
+   "qty": 58,
+   "price": 31.895,
+   "currency": "USD",
+   "fx_to_base": 0.755002,
+   "value_base": 1396.69,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 2.1
+   },
+   "realised_pnl": -2.1,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T16:51:05+00:00",
+   "fx_source": "yahoo",
+   "note": "SPE-4 short book: OKLO 6m -45%, 45% below its 200d average"
+  },
+  {
+   "time": "2026-10-13T16:51:08+00:00",
+   "side": "buy",
+   "symbol": "IB1T.L",
+   "instrument": "crypto_etn",
+   "qty": 310,
+   "price": 6.286,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1948.66,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:28:27+00:00",
+   "fx_source": "identity",
+   "note": "SPE-6 crypto sleeve: iShares Bitcoin ETP, +34% 3m (allowed after SPE-1 breakout)"
   }
  ],
  "marks": [
@@ -230,12 +311,17 @@
    "time": "2026-10-13T16:06:17+00:00",
    "equity": 9937.81,
    "cash": -3596.2
+  },
+  {
+   "time": "2026-10-13T16:51:43+00:00",
+   "equity": 9945.21,
+   "cash": -2782.68
   }
  ],
  "rules": "broke out of house rules: left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed); margin up to 0.5x equity; margin interest 5.25%",
  "margin_ratio": 0.5,
  "margin_rate": 0.0525,
- "interest_accrued_to": "2026-10-13T16:06:13+00:00",
+ "interest_accrued_to": "2026-10-13T16:51:38+00:00",
  "breakouts": [
   {
    "time": "2026-10-13T16:05:23+00:00",
@@ -247,5 +333,5 @@
    ]
   }
  ],
- "interest_paid": 0.0001
+ "interest_paid": 0.0163
 }

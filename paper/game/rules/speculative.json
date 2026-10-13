@@ -39,6 +39,51 @@
      "op": "add"
     }
    ]
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "SPE-4",
+     "adopted": "2026-10-13",
+     "text": "Run a short book of up to 30% of equity in broken high-volatility names (below their 200-day average, 6-month return worse than -25%)",
+     "params": {},
+     "rationale": "Having left the ISA, shorts on collapsing momentum fund the longs and profit if the speculative froth keeps deflating",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 1"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "SPE-5",
+     "adopted": "2026-10-13",
+     "text": "Pyramid winners: add with margin to any position up 20% from entry; never average down",
+     "params": {},
+     "rationale": "Convexity comes from pressing winners; adding to losers is how leveraged accounts reach zero",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 2"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "SPE-6",
+     "adopted": "2026-10-13",
+     "text": "Crypto sleeve: up to 20% of equity in the iShares Bitcoin ETP (IB1T.L)",
+     "params": {},
+     "rationale": "Outside the ISA it can hold bitcoin directly rather than via MSTR; bitcoin is +34% over 3 months and is the purest high-beta asset available",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 3"
   }
  ],
  "active": [
@@ -71,6 +116,27 @@
    "text": "Use borrowed money only for the two strongest momentum exposures",
    "params": {},
    "rationale": "Leverage on the best trends, not on hope"
+  },
+  {
+   "id": "SPE-4",
+   "adopted": "2026-10-13",
+   "text": "Run a short book of up to 30% of equity in broken high-volatility names (below their 200-day average, 6-month return worse than -25%)",
+   "params": {},
+   "rationale": "Having left the ISA, shorts on collapsing momentum fund the longs and profit if the speculative froth keeps deflating"
+  },
+  {
+   "id": "SPE-5",
+   "adopted": "2026-10-13",
+   "text": "Pyramid winners: add with margin to any position up 20% from entry; never average down",
+   "params": {},
+   "rationale": "Convexity comes from pressing winners; adding to losers is how leveraged accounts reach zero"
+  },
+  {
+   "id": "SPE-6",
+   "adopted": "2026-10-13",
+   "text": "Crypto sleeve: up to 20% of equity in the iShares Bitcoin ETP (IB1T.L)",
+   "params": {},
+   "rationale": "Outside the ISA it can hold bitcoin directly rather than via MSTR; bitcoin is +34% over 3 months and is the purest high-beta asset available"
   }
  ]
 }

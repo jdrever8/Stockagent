@@ -30,6 +30,51 @@
      "op": "add"
     }
    ]
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "MAC-4",
+     "adopted": "2026-10-13",
+     "text": "Volatility regime: if VIX closes above 25, halve equity exposure into money market; if below 15, allow +10% equity",
+     "params": {},
+     "rationale": "Equity risk premia are best harvested in calm regimes and protected in stressed ones; VIX is the market's own fear gauge",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 1"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "MAC-5",
+     "adopted": "2026-10-13",
+     "text": "War-risk insurance: hold 10% in gold while Brent is above $90",
+     "params": {},
+     "rationale": "Oil above $90 signals live Middle East risk; gold hedges a geopolitical shock that would hurt the rest of the book",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 2"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "MAC-6",
+     "adopted": "2026-10-13",
+     "text": "FOMC playbook: if the Fed holds on 28 Oct and signals no further hikes, move 20% from money market into long gilts the same day",
+     "params": {},
+     "rationale": "Pre-commits the pivot trade; the biggest macro gains come from acting first on a regime change",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 3"
   }
  ],
  "active": [
@@ -53,6 +98,27 @@
    "text": "Rotate money market into gilts if the US 10-year falls 30bp from 5.22% or payrolls turn negative",
    "params": {},
    "rationale": "Pre-commits the pivot trade so the agent acts on the regime change instead of debating it"
+  },
+  {
+   "id": "MAC-4",
+   "adopted": "2026-10-13",
+   "text": "Volatility regime: if VIX closes above 25, halve equity exposure into money market; if below 15, allow +10% equity",
+   "params": {},
+   "rationale": "Equity risk premia are best harvested in calm regimes and protected in stressed ones; VIX is the market's own fear gauge"
+  },
+  {
+   "id": "MAC-5",
+   "adopted": "2026-10-13",
+   "text": "War-risk insurance: hold 10% in gold while Brent is above $90",
+   "params": {},
+   "rationale": "Oil above $90 signals live Middle East risk; gold hedges a geopolitical shock that would hurt the rest of the book"
+  },
+  {
+   "id": "MAC-6",
+   "adopted": "2026-10-13",
+   "text": "FOMC playbook: if the Fed holds on 28 Oct and signals no further hikes, move 20% from money market into long gilts the same day",
+   "params": {},
+   "rationale": "Pre-commits the pivot trade; the biggest macro gains come from acting first on a regime change"
   }
  ]
 }

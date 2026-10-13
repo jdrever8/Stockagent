@@ -27,3 +27,21 @@ Rulebook amendment:
 - add MAC-1: Keep at least 20% in GBP money market until the Fed and BoE paths are clear  (why: Dry powder earning ~Bank Rate during a hiking cycle; lets the agent buy dislocations after FOMC 27-28 Oct and BoE 5 Nov)
 - add MAC-2: Halve energy exposure if Brent closes below its 50-day average  (why: Energy is the core inflation trade; a break in oil's trend is the first sign the regime is turning)
 - add MAC-3: Rotate money market into gilts if the US 10-year falls 30bp from 5.22% or payrolls turn negative  (why: Pre-commits the pivot trade so the agent acts on the regime change instead of debating it)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add MAC-4: Volatility regime: if VIX closes above 25, halve equity exposure into money market; if below 15, allow +10% equity  (why: Equity risk premia are best harvested in calm regimes and protected in stressed ones; VIX is the market's own fear gauge)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add MAC-5: War-risk insurance: hold 10% in gold while Brent is above $90  (why: Oil above $90 signals live Middle East risk; gold hedges a geopolitical shock that would hurt the rest of the book)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add MAC-6: FOMC playbook: if the Fed holds on 28 Oct and signals no further hikes, move 20% from money market into long gilts the same day  (why: Pre-commits the pivot trade; the biggest macro gains come from acting first on a regime change)
+
+## 2026-10-13T16:51:10+00:00
+sell 8 VUKE.L @ 46.155 GBP = £369.24: MAC-5 funding: trim FTSE 100 to make room for gold; MAC-1 money market stays above 20%
+
+## 2026-10-13T16:51:12+00:00
+buy 16 SGLN.L @ 60.94 GBP = £975.04: MAC-5 war-risk insurance: 10% gold while Brent > $90 (Brent $105.9)

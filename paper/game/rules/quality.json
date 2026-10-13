@@ -30,6 +30,51 @@
      "op": "add"
     }
    ]
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "QUA-4",
+     "adopted": "2026-10-13",
+     "text": "Follow insider conviction: when a holding's directors buy shares (RNS director dealings), add up to 3% of equity",
+     "params": {},
+     "rationale": "Directors buying in a de-rated business is one of the best-documented signals that the market is too pessimistic",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 1"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "QUA-5",
+     "adopted": "2026-10-13",
+     "text": "Earnings blackout: no adding in the three trading days before a holding reports; add after if results confirm the thesis",
+     "params": {},
+     "rationale": "Results are the thesis test; buying after the evidence costs a little upside but avoids averaging into a broken story",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 2"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "QUA-6",
+     "adopted": "2026-10-13",
+     "text": "Swap the weakest: if a holding is the book's worst over 3 months and its consensus estimates were cut, replace it with the cheapest high-ROIC name on the watchlist (Halma, Experian, Games Workshop, RELX, LSEG, Visa)",
+     "params": {},
+     "rationale": "Keeps capital in the best compounding businesses rather than defending a stale pick",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 3"
   }
  ],
  "active": [
@@ -53,6 +98,27 @@
    "text": "Sell only on a thesis break (organic growth or margins deteriorating in results), never on price alone",
    "params": {},
    "rationale": "Avoids panic-selling exactly when the market offers quality cheaply"
+  },
+  {
+   "id": "QUA-4",
+   "adopted": "2026-10-13",
+   "text": "Follow insider conviction: when a holding's directors buy shares (RNS director dealings), add up to 3% of equity",
+   "params": {},
+   "rationale": "Directors buying in a de-rated business is one of the best-documented signals that the market is too pessimistic"
+  },
+  {
+   "id": "QUA-5",
+   "adopted": "2026-10-13",
+   "text": "Earnings blackout: no adding in the three trading days before a holding reports; add after if results confirm the thesis",
+   "params": {},
+   "rationale": "Results are the thesis test; buying after the evidence costs a little upside but avoids averaging into a broken story"
+  },
+  {
+   "id": "QUA-6",
+   "adopted": "2026-10-13",
+   "text": "Swap the weakest: if a holding is the book's worst over 3 months and its consensus estimates were cut, replace it with the cheapest high-ROIC name on the watchlist (Halma, Experian, Games Workshop, RELX, LSEG, Visa)",
+   "params": {},
+   "rationale": "Keeps capital in the best compounding businesses rather than defending a stale pick"
   }
  ]
 }

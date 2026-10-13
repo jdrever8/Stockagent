@@ -30,6 +30,51 @@
      "op": "add"
     }
    ]
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "CON-4",
+     "adopted": "2026-10-13",
+     "text": "Fade the game's own crowd: never hold an instrument that two or more other agents hold; prefer names no agent owns",
+     "params": {},
+     "rationale": "The other seven agents are the nearest crowd it can see; if they all agree, the edge is gone",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 1"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "CON-5",
+     "adopted": "2026-10-13",
+     "text": "Sentiment gauge: only open a new position when a news search for the name in the past week is predominantly negative",
+     "params": {},
+     "rationale": "Measures pessimism directly instead of inferring it from price alone",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 2"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "CON-6",
+     "adopted": "2026-10-13",
+     "text": "Every Monday, buy up to 5% of equity in the largest holding of the bottom-ranked agent, if the asset is not broken",
+     "params": {},
+     "rationale": "The game's worst performer is holding what has just been punished most: the purest contrarian signal available",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 3"
   }
  ],
  "active": [
@@ -53,6 +98,27 @@
    "text": "Never buy a company with negative free cash flow and rising net debt",
    "params": {},
    "rationale": "Separates hated-but-sound from broken (the Oracle rule); value traps are the contrarian's main risk"
+  },
+  {
+   "id": "CON-4",
+   "adopted": "2026-10-13",
+   "text": "Fade the game's own crowd: never hold an instrument that two or more other agents hold; prefer names no agent owns",
+   "params": {},
+   "rationale": "The other seven agents are the nearest crowd it can see; if they all agree, the edge is gone"
+  },
+  {
+   "id": "CON-5",
+   "adopted": "2026-10-13",
+   "text": "Sentiment gauge: only open a new position when a news search for the name in the past week is predominantly negative",
+   "params": {},
+   "rationale": "Measures pessimism directly instead of inferring it from price alone"
+  },
+  {
+   "id": "CON-6",
+   "adopted": "2026-10-13",
+   "text": "Every Monday, buy up to 5% of equity in the largest holding of the bottom-ranked agent, if the asset is not broken",
+   "params": {},
+   "rationale": "The game's worst performer is holding what has just been punished most: the purest contrarian signal available"
   }
  ]
 }

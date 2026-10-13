@@ -27,3 +27,18 @@ Rulebook amendment:
 - add CHA-1: Exit on a close below the 50-day average or -8% from entry  (why: Formalises the opening exit rule; small, fast losses are what make breakout trading pay)
 - add CHA-2: Once a trade is +10%, move the stop to entry +2%, then trail 8% below the highest close  (why: Locks in winners without capping the runs that pay for all the failed breakouts)
 - add CHA-3: New entries only on 20-day breakouts with volume at least 1.2x the 50-day average and RSI(14) below 75  (why: Volume confirms real demand; very high RSI breakouts tend to be exhausted)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add CHA-4: Relative strength: only hold names beating the FTSE 100 over 20 days; swap the laggard for the strongest new breakout  (why: Breakouts that lag the index are failing quietly; capital belongs with the leaders)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add CHA-5: BREAK OUT: leave the ISA to short 20-day breakdowns on 1.2x volume (max 20% of equity short), cover on a close above the 20-day high or +8% against {'isa': False} (why: In a stagflationary market, breakdowns are as tradable as breakouts; a two-sided book doubles the opportunity set)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add CHA-6: At most 2 new entries per day and 6 positions in total  (why: Overtrading kills breakout systems; forced selectivity keeps only the best setups)
+
+## 2026-10-13T16:51:13+00:00
+sell 107 RR.L @ 13.456 GBP = £1,439.79: CHA-5 short: RR.L closed 1345.6p below its 20-day low 1367p on 1.86x volume; cover above 20d high or +8% against

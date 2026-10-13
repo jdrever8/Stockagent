@@ -562,3 +562,45 @@ def test_reversion_idle_asset_parks_unused_cash():
     p = dict(game_mod.DEFAULT_PARAMS["reversion"], idle_asset="CSH2.L")
     targets, why, inst = game_mod.strat_reversion(lambda s: up, book, p)
     assert targets == {"CSH2.L": 1.0} and inst["CSH2.L"] == "etf" and "idle 100%" in why
+
+
+def test_new_rule_mechanics(tmp_path):
+    import random as _r
+    rng = _r.Random(1)
+    calm = [100 * (1 + 0.002 * i) for i in range(250)]
+    wild = [100 * (1 + 0.003 * i) * (1 + rng.uniform(-0.05, 0.05)) for i in range(250)]
+    series = {s: [100.0] * 250 for s in game_mod.MOMENTUM_UNIVERSE}
+    series.update({"VUSA.L": calm, "VJPN.L": wild})
+    book = type("B", (), {"data": {"positions": {}, "trades": []}})()
+    p = dict(game_mod.DEFAULT_PARAMS["momentum"], top_n=2, weighting="inverse_vol", min_score=0.01)
+    w, why, _ = game_mod.strat_momentum(lambda s: series[s], book, p)
+    assert set(w) == {"VUSA.L", "VJPN.L"} and w["VUSA.L"] > w["VJPN.L"] and abs(sum(w.values()) - 1) < 1e-9
+    series["VWRP.L"] = [200 - i * 0.3 for i in range(250)]                  # global tracker below 200d
+    w, why, _ = game_mod.strat_momentum(lambda s: series[s], book, dict(p, trend_filter="VWRP.L"))
+    assert w == {p["safe"]: 1.0} and "crash filter" in why
+    held = type("B", (), {"data": {"positions": {"VWRP.L": {"qty": 1}}, "trades": [{}]}})()
+    pp = dict(game_mod.DEFAULT_PARAMS["passive"], holding="FWRG.L")
+    assert game_mod.strat_passive(lambda s: [], held, pp)[0] == {"FWRG.L": 1.0}
+    # owner-granted turns bypass the once-a-day limit
+    root = str(tmp_path / "game")
+    game_mod.init_game(root)
+    add = [{"op": "add", "text": "t", "rationale": "r"}]
+    game_mod.amend_rules("macro", add, root, today="2026-10-20")
+    game_mod.amend_rules("macro", add, root, today="2026-10-20", grant="rounds")
+    with pytest.raises(PermissionError):
+        game_mod.amend_rules("macro", add, root, today="2026-10-20")
+
+
+def test_self_lock_rule_blocks_further_amendments(tmp_path):
+    import json as _json
+    root = str(tmp_path / "game")
+    game_mod.init_game(root)
+    game_mod.amend_rules("passive", [{"op": "add", "text": "Commitment", "rationale": "never tinker"}], root,
+                         today="2026-10-20")
+    path = game_mod.rules_path("passive", root)
+    d = _json.load(open(path))
+    d["active"][0]["lock"] = True
+    _json.dump(d, open(path, "w"))
+    with pytest.raises(PermissionError, match="bound itself"):
+        game_mod.amend_rules("passive", [{"op": "add", "text": "t", "rationale": "r"}], root, today="2026-10-21",
+                             grant="extra turn")

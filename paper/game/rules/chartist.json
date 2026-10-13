@@ -30,6 +30,56 @@
      "op": "add"
     }
    ]
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "CHA-4",
+     "adopted": "2026-10-13",
+     "text": "Relative strength: only hold names beating the FTSE 100 over 20 days; swap the laggard for the strongest new breakout",
+     "params": {},
+     "rationale": "Breakouts that lag the index are failing quietly; capital belongs with the leaders",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 1"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "CHA-5",
+     "adopted": "2026-10-13",
+     "text": "BREAK OUT: leave the ISA to short 20-day breakdowns on 1.2x volume (max 20% of equity short), cover on a close above the 20-day high or +8% against",
+     "params": {
+      "isa": false
+     },
+     "rationale": "In a stagflationary market, breakdowns are as tradable as breakouts; a two-sided book doubles the opportunity set",
+     "breakout": [
+      "left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)"
+     ],
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 2"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "CHA-6",
+     "adopted": "2026-10-13",
+     "text": "At most 2 new entries per day and 6 positions in total",
+     "params": {},
+     "rationale": "Overtrading kills breakout systems; forced selectivity keeps only the best setups",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 3"
   }
  ],
  "active": [
@@ -53,6 +103,32 @@
    "text": "New entries only on 20-day breakouts with volume at least 1.2x the 50-day average and RSI(14) below 75",
    "params": {},
    "rationale": "Volume confirms real demand; very high RSI breakouts tend to be exhausted"
+  },
+  {
+   "id": "CHA-4",
+   "adopted": "2026-10-13",
+   "text": "Relative strength: only hold names beating the FTSE 100 over 20 days; swap the laggard for the strongest new breakout",
+   "params": {},
+   "rationale": "Breakouts that lag the index are failing quietly; capital belongs with the leaders"
+  },
+  {
+   "id": "CHA-5",
+   "adopted": "2026-10-13",
+   "text": "BREAK OUT: leave the ISA to short 20-day breakdowns on 1.2x volume (max 20% of equity short), cover on a close above the 20-day high or +8% against",
+   "params": {
+    "isa": false
+   },
+   "rationale": "In a stagflationary market, breakdowns are as tradable as breakouts; a two-sided book doubles the opportunity set",
+   "breakout": [
+    "left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)"
+   ]
+  },
+  {
+   "id": "CHA-6",
+   "adopted": "2026-10-13",
+   "text": "At most 2 new entries per day and 6 positions in total",
+   "params": {},
+   "rationale": "Overtrading kills breakout systems; forced selectivity keeps only the best setups"
   }
  ]
 }

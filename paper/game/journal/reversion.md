@@ -21,3 +21,19 @@ Rulebook amendment:
 ## 2026-10-13T16:05:45+00:00
 Signal: idle 100% in CSH2.L
 Trades: buy 7.0 CSH2.L @ 1255.7
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add REV-4: Time stop: exit any position after 10 calendar days {'time_stop_days': 10} (why: A dip that has not reverted in two weeks has become a different trade; frees capital for fresh signals)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add REV-5: Add ten US mega-caps to the dip universe {'universe': ['AZN.L', 'SHEL.L', 'HSBA.L', 'ULVR.L', 'BP.L', 'GSK.L', 'RIO.L', 'DGE.L', 'REL.L', 'LSEG.L', 'BATS.L', 'NG.L', 'MSFT', 'AAPL', 'GOOGL', 'AMZN', 'META', 'NVDA', 'V', 'MA', 'JPM', 'COST']} (why: Deeper, more liquid names with frequent sharp dips; more signals, no stamp duty)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add REV-6: Concentrate: at most 4 positions of 25% {'max_positions': 4} (why: Signals are rare; when one fires, a larger position makes it count)
+
+## 2026-10-13T16:50:18+00:00
+Signal: idle 100% in CSH2.L
+Trades: none

@@ -4,7 +4,7 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 700.0801429671571,
+ "cash": 94.28014296715719,
  "fee_per_trade": 0.0,
  "isa": true,
  "eliminated": null,
@@ -34,8 +34,14 @@
    "instrument": "etf"
   },
   "VUKE.L": {
-   "qty": 36.0,
-   "cost_base": 1662.3,
+   "qty": 28.0,
+   "cost_base": 1292.9,
+   "currency": "GBP",
+   "instrument": "etf"
+  },
+  "SGLN.L": {
+   "qty": 16.0,
+   "cost_base": 975.04,
    "currency": "GBP",
    "instrument": "etf"
   }
@@ -145,6 +151,48 @@
    "quote_time": "2026-10-13T14:21:54+00:00",
    "fx_source": "identity",
    "note": "macro opening position (17% target)"
+  },
+  {
+   "time": "2026-10-13T16:51:10+00:00",
+   "side": "sell",
+   "symbol": "VUKE.L",
+   "instrument": "etf",
+   "qty": 8,
+   "price": 46.155,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 369.24,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": -0.16,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:23+00:00",
+   "fx_source": "identity",
+   "note": "MAC-5 funding: trim FTSE 100 to make room for gold; MAC-1 money market stays above 20%"
+  },
+  {
+   "time": "2026-10-13T16:51:12+00:00",
+   "side": "buy",
+   "symbol": "SGLN.L",
+   "instrument": "etf",
+   "qty": 16,
+   "price": 60.94,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 975.04,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:06+00:00",
+   "fx_source": "identity",
+   "note": "MAC-5 war-risk insurance: 10% gold while Brent > $90 (Brent $105.9)"
   }
  ],
  "marks": [
@@ -187,8 +235,13 @@
    "time": "2026-10-13T16:06:03+00:00",
    "equity": 9998.96,
    "cash": 700.08
+  },
+  {
+   "time": "2026-10-13T16:51:29+00:00",
+   "equity": 9999.52,
+   "cash": 94.28
   }
  ],
  "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice",
- "interest_accrued_to": "2026-10-13T16:06:00+00:00"
+ "interest_accrued_to": "2026-10-13T16:51:26+00:00"
 }

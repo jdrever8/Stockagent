@@ -36,6 +36,80 @@
      "op": "add"
     }
    ]
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "REV-4",
+     "adopted": "2026-10-13",
+     "text": "Time stop: exit any position after 10 calendar days",
+     "params": {
+      "time_stop_days": 10
+     },
+     "rationale": "A dip that has not reverted in two weeks has become a different trade; frees capital for fresh signals",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 1"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "REV-5",
+     "adopted": "2026-10-13",
+     "text": "Add ten US mega-caps to the dip universe",
+     "params": {
+      "universe": [
+       "AZN.L",
+       "SHEL.L",
+       "HSBA.L",
+       "ULVR.L",
+       "BP.L",
+       "GSK.L",
+       "RIO.L",
+       "DGE.L",
+       "REL.L",
+       "LSEG.L",
+       "BATS.L",
+       "NG.L",
+       "MSFT",
+       "AAPL",
+       "GOOGL",
+       "AMZN",
+       "META",
+       "NVDA",
+       "V",
+       "MA",
+       "JPM",
+       "COST"
+      ]
+     },
+     "rationale": "Deeper, more liquid names with frequent sharp dips; more signals, no stamp duty",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 2"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "REV-6",
+     "adopted": "2026-10-13",
+     "text": "Concentrate: at most 4 positions of 25%",
+     "params": {
+      "max_positions": 4
+     },
+     "rationale": "Signals are rare; when one fires, a larger position makes it count",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 3"
   }
  ],
  "active": [
@@ -65,6 +139,56 @@
     "stop_loss": 0.08
    },
    "rationale": "Mean reversion fails when a dip becomes a trend change; cap the loss on those"
+  },
+  {
+   "id": "REV-4",
+   "adopted": "2026-10-13",
+   "text": "Time stop: exit any position after 10 calendar days",
+   "params": {
+    "time_stop_days": 10
+   },
+   "rationale": "A dip that has not reverted in two weeks has become a different trade; frees capital for fresh signals"
+  },
+  {
+   "id": "REV-5",
+   "adopted": "2026-10-13",
+   "text": "Add ten US mega-caps to the dip universe",
+   "params": {
+    "universe": [
+     "AZN.L",
+     "SHEL.L",
+     "HSBA.L",
+     "ULVR.L",
+     "BP.L",
+     "GSK.L",
+     "RIO.L",
+     "DGE.L",
+     "REL.L",
+     "LSEG.L",
+     "BATS.L",
+     "NG.L",
+     "MSFT",
+     "AAPL",
+     "GOOGL",
+     "AMZN",
+     "META",
+     "NVDA",
+     "V",
+     "MA",
+     "JPM",
+     "COST"
+    ]
+   },
+   "rationale": "Deeper, more liquid names with frequent sharp dips; more signals, no stamp duty"
+  },
+  {
+   "id": "REV-6",
+   "adopted": "2026-10-13",
+   "text": "Concentrate: at most 4 positions of 25%",
+   "params": {
+    "max_positions": 4
+   },
+   "rationale": "Signals are rare; when one fires, a larger position makes it count"
   }
  ]
 }

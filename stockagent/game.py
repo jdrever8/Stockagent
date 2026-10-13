@@ -121,10 +121,11 @@ History = Callable[[str], List[float]]
 # Tunable parameters. Agents may change these through their own daily rulebook amendments.
 DEFAULT_PARAMS: Dict[str, Dict[str, object]] = {
     "momentum": {"universe": MOMENTUM_UNIVERSE, "safe": SAFE, "top_n": 3, "lookback": 126, "skip": 5,
-                 "min_score": 0.0, "tolerance": 0.10},
+                 "min_score": 0.0, "tolerance": 0.10, "trend_filter": None, "weighting": "equal"},
     "reversion": {"universe": REVERSION_UNIVERSE, "rsi_len": 2, "rsi_entry": 10.0, "trend_len": 200,
-                  "exit_len": 5, "max_positions": 5, "stop_loss": None, "tolerance": 0.10, "idle_asset": None},
-    "passive": {"holding": GLOBAL_TRACKER, "tolerance": 0.10},
+                  "exit_len": 5, "max_positions": 5, "stop_loss": None, "tolerance": 0.10, "idle_asset": None,
+                  "time_stop_days": None},
+    "passive": {"holding": GLOBAL_TRACKER, "tolerance": 0.10, "top_up": False},
 }
 
 
@@ -138,8 +139,24 @@ def strat_momentum(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float]
     ranked = sorted(scores, key=scores.get, reverse=True)
     picks = [s for s in ranked[: int(p["top_n"])] if scores[s] > float(p["min_score"])]
     why = f"{lookback}d return skipping {skip}d: " + ", ".join(f"{s} {scores[s]:+.1%}" for s in ranked)
+    gate = p.get("trend_filter")
+    if gate:
+        closes = hist(gate)
+        avg = sma(closes, 200)
+        if avg is not None and closes[-1] < avg:
+            return {p["safe"]: 1.0}, why + f" -> {gate} below its 200d average: crash filter, hold the safe asset", "etf"
     if not picks:
         return {p["safe"]: 1.0}, why + " -> nothing qualifies, hold the safe asset", "etf"
+    if p.get("weighting") == "inverse_vol":
+        vols = {}
+        for sym in picks:
+            c = hist(sym)[-64:]
+            rets = [b / a - 1 for a, b in zip(c, c[1:])]
+            vols[sym] = max(statistics.pstdev(rets), 1e-4) if len(rets) > 1 else 1.0
+        inv = {sym: 1 / v for sym, v in vols.items()}
+        total = sum(inv.values())
+        weights = {sym: inv[sym] / total for sym in picks}
+        return weights, why + " -> hold " + ", ".join(f"{s} {w:.0%}" for s, w in weights.items()) + " (inverse vol)", "etf"
     return {s: 1 / len(picks) for s in picks}, why + f" -> hold {picks}", "etf"
 
 
@@ -152,7 +169,10 @@ def strat_reversion(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float
         closes = hist(sym)
         m_exit = sma(closes, int(p["exit_len"]))
         avg_cost = pos["cost_base"] / pos["qty"] if pos["qty"] else 0
-        if p.get("stop_loss") and closes and avg_cost and closes[-1] < avg_cost * (1 - float(p["stop_loss"])):
+        held_days = days_held(book, sym)
+        if p.get("time_stop_days") and held_days is not None and held_days >= float(p["time_stop_days"]):
+            notes.append(f"time stop {sym}: held {held_days:.0f} days")
+        elif p.get("stop_loss") and closes and avg_cost and closes[-1] < avg_cost * (1 - float(p["stop_loss"])):
             notes.append(f"stop {sym}: {closes[-1]:.2f} < cost {avg_cost:.2f} -{float(p['stop_loss']):.0%}")
         elif m_exit is not None and closes[-1] > m_exit:
             notes.append(f"exit {sym}: {closes[-1]:.2f} > {p['exit_len']}d {m_exit:.2f}")
@@ -180,9 +200,31 @@ def strat_reversion(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float
 
 
 def strat_passive(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float], str, str]:
-    if book.data["trades"]:
-        return {s: None for s in book.data["positions"]}, "hold forever", "etf"   # None = leave as is
-    return {p["holding"]: 1.0}, "day one: buy and hold", "etf"
+    held = set(book.data["positions"])
+    if not book.data["trades"]:
+        return {p["holding"]: 1.0}, "day one: buy and hold", "etf"
+    if held != {p["holding"]}:
+        return {p["holding"]: 1.0}, f"switch everything into {p['holding']}", "etf"
+    if p.get("top_up"):
+        return {p["holding"]: 1.0}, "hold, sweeping spare cash into the fund", "etf"
+    return {s: None for s in held}, "hold forever", "etf"   # None = leave as is
+
+
+def days_held(book: Book, symbol: str) -> Optional[float]:
+    """Calendar days since the current position in ``symbol`` was opened (from flat)."""
+    import datetime as _dt
+    qty, opened = 0.0, None
+    for t in book.data["trades"]:
+        if t["symbol"] != symbol:
+            continue
+        before = qty
+        qty += t["qty"] if t["side"] == "buy" else -t["qty"]
+        if abs(before) < 1e-9 and abs(qty) > 1e-9:
+            opened = t["time"]
+    if opened is None or abs(qty) < 1e-9:
+        return None
+    delta = _dt.datetime.now(_dt.timezone.utc) - _dt.datetime.fromisoformat(opened)
+    return delta.total_seconds() / 86400
 
 
 STRATEGIES = {"momentum": strat_momentum, "reversion": strat_reversion,
@@ -373,7 +415,8 @@ def active_params(name: str, root: str = GAME_DIR) -> dict:
     return params
 
 
-def amend_rules(name: str, changes: List[dict], root: str = GAME_DIR, today: Optional[str] = None) -> dict:
+def amend_rules(name: str, changes: List[dict], root: str = GAME_DIR, today: Optional[str] = None,
+                grant: Optional[str] = None) -> dict:
     """Apply one day's amendment: a list of {"op": "add"|"retire", "text", "params", "rationale", "id"}."""
     spec = next((a for a in ROSTER if a.name == name), None)
     if spec is None:
@@ -385,7 +428,10 @@ def amend_rules(name: str, changes: List[dict], root: str = GAME_DIR, today: Opt
     if book.data.get("eliminated"):
         raise PermissionError(f"{name} is eliminated")
     rules = load_rules(name, root)
-    if any(a["date"] == today for a in rules["amendments"]):
+    lock = next((r for r in rules["active"] if r.get("lock")), None)
+    if lock:
+        raise PermissionError(f"{name} bound itself with {lock['id']}: no further rule changes")
+    if not grant and any(a["date"] == today and not a.get("grant") for a in rules["amendments"]):
         raise PermissionError(f"{name} has already amended its rules today ({today}); once a day")
     if not changes:
         raise ValueError("an amendment needs at least one change")
@@ -423,7 +469,10 @@ def amend_rules(name: str, changes: List[dict], root: str = GAME_DIR, today: Opt
             applied.append({"op": "retire", "id": rid, "rationale": ch.get("rationale", "")})
         else:
             raise ValueError("op must be add or retire (retire then add to amend)")
-    rules["amendments"].append({"date": today, "time": now(), "changes": applied})
+    entry = {"date": today, "time": now(), "changes": applied}
+    if grant:
+        entry["grant"] = grant   # owner-granted extra turn, outside the once-a-day allowance
+    rules["amendments"].append(entry)
     rules["active"] = list(active.values())
     os.makedirs(os.path.dirname(rules_path(name, root)), exist_ok=True)
     with open(rules_path(name, root), "w", encoding="utf-8") as fh:

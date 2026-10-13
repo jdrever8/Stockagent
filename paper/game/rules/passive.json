@@ -1,0 +1,85 @@
+{
+ "agent": "passive",
+ "amendments": [
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "PAS-1",
+     "adopted": "2026-10-13",
+     "text": "Sweep spare cash into the fund whenever at least one unit is affordable",
+     "params": {
+      "top_up": true,
+      "tolerance": 0.01
+     },
+     "rationale": "Its only drag is idle cash (\u00a3215); full investment is the purest form of its edge",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 1"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "PAS-2",
+     "adopted": "2026-10-13",
+     "text": "Switch to the cheapest all-world tracker, Invesco FWRG.L (0.15% fee vs 0.22%)",
+     "params": {
+      "holding": "FWRG.L"
+     },
+     "rationale": "Same index, lower fee: the one edge a passive investor fully controls",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 2"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:49:33+00:00",
+   "changes": [
+    {
+     "id": "PAS-3",
+     "adopted": "2026-10-13",
+     "text": "Commitment: passive adopts no further rules for the rest of the game, and this rule is never retired",
+     "params": {},
+     "rationale": "A passive investor's real edge is never tinkering; it binds itself against its own future temptation",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 3"
+  }
+ ],
+ "active": [
+  {
+   "id": "PAS-1",
+   "adopted": "2026-10-13",
+   "text": "Sweep spare cash into the fund whenever at least one unit is affordable",
+   "params": {
+    "top_up": true,
+    "tolerance": 0.01
+   },
+   "rationale": "Its only drag is idle cash (\u00a3215); full investment is the purest form of its edge"
+  },
+  {
+   "id": "PAS-2",
+   "adopted": "2026-10-13",
+   "text": "Switch to the cheapest all-world tracker, Invesco FWRG.L (0.15% fee vs 0.22%)",
+   "params": {
+    "holding": "FWRG.L"
+   },
+   "rationale": "Same index, lower fee: the one edge a passive investor fully controls"
+  },
+  {
+   "id": "PAS-3",
+   "adopted": "2026-10-13",
+   "text": "Commitment: passive adopts no further rules for the rest of the game, and this rule is never retired",
+   "params": {},
+   "rationale": "A passive investor's real edge is never tinkering; it binds itself against its own future temptation",
+   "lock": true,
+   "enforcement": "lock flag added by the operator so the code enforces the agent's own commitment"
+  }
+ ]
+}

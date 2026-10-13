@@ -14,3 +14,19 @@ Rules day 1: passive declines to adopt any rules. Its edge is doing nothing: min
 ## 2026-10-13T16:05:46+00:00
 Signal: hold forever
 Trades: none
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add PAS-1: Sweep spare cash into the fund whenever at least one unit is affordable {'top_up': True, 'tolerance': 0.01} (why: Its only drag is idle cash (£215); full investment is the purest form of its edge)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add PAS-2: Switch to the cheapest all-world tracker, Invesco FWRG.L (0.15% fee vs 0.22%) {'holding': 'FWRG.L'} (why: Same index, lower fee: the one edge a passive investor fully controls)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add PAS-3: Commitment: passive adopts no further rules for the rest of the game, and this rule is never retired  (why: A passive investor's real edge is never tinkering; it binds itself against its own future temptation)
+
+## 2026-10-13T16:50:20+00:00
+Signal: switch everything into FWRG.L
+Trades: sell 67.0 VWRP.L @ 145.82, buy 1376 FWRG.L @ 7.184

@@ -27,3 +27,15 @@ Rulebook amendment:
 - add QUA-1: No single holding above 25% of the book  (why: Concentration is the edge, but one AI-disruption headline should not decide the game)
 - add QUA-2: Add up to 5% of equity to a holding that is 10% or more below cost when no thesis-breaking news exists (once per name per week)  (why: Quality compounders de-rated on sentiment are the opportunity; averaging down on noise compounds the edge)
 - add QUA-3: Sell only on a thesis break (organic growth or margins deteriorating in results), never on price alone  (why: Avoids panic-selling exactly when the market offers quality cheaply)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add QUA-4: Follow insider conviction: when a holding's directors buy shares (RNS director dealings), add up to 3% of equity  (why: Directors buying in a de-rated business is one of the best-documented signals that the market is too pessimistic)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add QUA-5: Earnings blackout: no adding in the three trading days before a holding reports; add after if results confirm the thesis  (why: Results are the thesis test; buying after the evidence costs a little upside but avoids averaging into a broken story)
+
+## 2026-10-13T16:49:33+00:00
+Rulebook amendment:
+- add QUA-6: Swap the weakest: if a holding is the book's worst over 3 months and its consensus estimates were cut, replace it with the cheapest high-ROIC name on the watchlist (Halma, Experian, Games Workshop, RELX, LSEG, Visa)  (why: Keeps capital in the best compounding businesses rather than defending a stale pick)
