@@ -4,12 +4,149 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 10000.0,
+ "cash": 700.0801429671571,
  "fee_per_trade": 0.0,
  "isa": true,
  "eliminated": null,
- "positions": {},
- "trades": [],
+ "positions": {
+  "CSH2.L": {
+   "qty": 2.0,
+   "cost_base": 2511.74672,
+   "currency": "GBP",
+   "instrument": "etf"
+  },
+  "SHEL.L": {
+   "qty": 51.0,
+   "cost_base": 1964.7749999999999,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "IUES.L": {
+   "qty": 138.0,
+   "cost_base": 1474.8131370328424,
+   "currency": "USD",
+   "instrument": "etf"
+  },
+  "VUSA.L": {
+   "qty": 15.0,
+   "cost_base": 1674.255,
+   "currency": "GBP",
+   "instrument": "etf"
+  },
+  "VUKE.L": {
+   "qty": 36.0,
+   "cost_base": 1662.3,
+   "currency": "GBP",
+   "instrument": "etf"
+  }
+ },
+ "trades": [
+  {
+   "time": "2026-10-13T14:36:58+00:00",
+   "side": "buy",
+   "symbol": "CSH2.L",
+   "instrument": "etf",
+   "qty": 2,
+   "price": 1255.87336,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 2511.75,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:21:40+00:00",
+   "fx_source": "identity",
+   "note": "macro opening position (30% target)"
+  },
+  {
+   "time": "2026-10-13T14:36:59+00:00",
+   "side": "buy",
+   "symbol": "SHEL.L",
+   "instrument": "share",
+   "qty": 51,
+   "price": 38.525,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1964.77,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 9.82,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:21:56+00:00",
+   "fx_source": "identity",
+   "note": "macro opening position (20% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:00+00:00",
+   "side": "buy",
+   "symbol": "IUES.L",
+   "instrument": "etf",
+   "qty": 138,
+   "price": 14.155,
+   "currency": "USD",
+   "fx_to_base": 0.755002,
+   "value_base": 1474.81,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 2.21
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:21:30+00:00",
+   "fx_source": "yahoo",
+   "note": "macro opening position (15% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:00+00:00",
+   "side": "buy",
+   "symbol": "VUSA.L",
+   "instrument": "etf",
+   "qty": 15,
+   "price": 111.617,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1674.26,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:21:59+00:00",
+   "fx_source": "identity",
+   "note": "macro opening position (17% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:01+00:00",
+   "side": "buy",
+   "symbol": "VUKE.L",
+   "instrument": "etf",
+   "qty": 36,
+   "price": 46.175,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1662.3,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:21:54+00:00",
+   "fx_source": "identity",
+   "note": "macro opening position (17% target)"
+  }
+ ],
  "marks": [
   {
    "time": "2026-10-13T14:30:08+00:00",
@@ -20,6 +157,16 @@
    "time": "2026-10-13T14:30:26+00:00",
    "equity": 10000.0,
    "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:35:16+00:00",
+   "equity": 10000.0,
+   "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:37:26+00:00",
+   "equity": 9987.35,
+   "cash": 700.08
   }
  ],
  "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice"

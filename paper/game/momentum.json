@@ -4,12 +4,95 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 10000.0,
+ "cash": 184.51100000000042,
  "fee_per_trade": 0.0,
  "isa": true,
  "eliminated": null,
- "positions": {},
- "trades": [],
+ "positions": {
+  "VUSA.L": {
+   "qty": 29.0,
+   "cost_base": 3237.908,
+   "currency": "GBP",
+   "instrument": "etf"
+  },
+  "VJPN.L": {
+   "qty": 83.0,
+   "cost_base": 3299.001,
+   "currency": "GBP",
+   "instrument": "etf"
+  },
+  "VFEM.L": {
+   "qty": 53.0,
+   "cost_base": 3278.58,
+   "currency": "GBP",
+   "instrument": "etf"
+  }
+ },
+ "trades": [
+  {
+   "time": "2026-10-13T14:35:01+00:00",
+   "side": "buy",
+   "symbol": "VUSA.L",
+   "instrument": "etf",
+   "qty": 29.0,
+   "price": 111.652,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 3237.91,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:19:49+00:00",
+   "fx_source": "identity",
+   "note": "6m-1w returns: VUSA.L +18.6%, VJPN.L +16.2%, VFEM.L +12.1%, VMID.L +11.7%, IUKP.L +7.5%, VERX.L +5.0%, VUKE.L +1.1%, IGLT.L -2.9%, SGLN.L -10.8% -> hold ['VUSA.L', 'VJPN.L', 'VFEM.L']"
+  },
+  {
+   "time": "2026-10-13T14:35:02+00:00",
+   "side": "buy",
+   "symbol": "VJPN.L",
+   "instrument": "etf",
+   "qty": 83.0,
+   "price": 39.747,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 3299.0,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:13:07+00:00",
+   "fx_source": "identity",
+   "note": "6m-1w returns: VUSA.L +18.6%, VJPN.L +16.2%, VFEM.L +12.1%, VMID.L +11.7%, IUKP.L +7.5%, VERX.L +5.0%, VUKE.L +1.1%, IGLT.L -2.9%, SGLN.L -10.8% -> hold ['VUSA.L', 'VJPN.L', 'VFEM.L']"
+  },
+  {
+   "time": "2026-10-13T14:35:02+00:00",
+   "side": "buy",
+   "symbol": "VFEM.L",
+   "instrument": "etf",
+   "qty": 53.0,
+   "price": 61.86,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 3278.58,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:16:20+00:00",
+   "fx_source": "identity",
+   "note": "6m-1w returns: VUSA.L +18.6%, VJPN.L +16.2%, VFEM.L +12.1%, VMID.L +11.7%, IUKP.L +7.5%, VERX.L +5.0%, VUKE.L +1.1%, IGLT.L -2.9%, SGLN.L -10.8% -> hold ['VUSA.L', 'VJPN.L', 'VFEM.L']"
+  }
+ ],
  "marks": [
   {
    "time": "2026-10-13T14:30:08+00:00",
@@ -20,6 +103,16 @@
    "time": "2026-10-13T14:30:26+00:00",
    "equity": 10000.0,
    "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:35:14+00:00",
+   "equity": 10000.23,
+   "cash": 184.51
+  },
+  {
+   "time": "2026-10-13T14:37:21+00:00",
+   "equity": 9996.75,
+   "cash": 184.51
   }
  ],
  "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice"

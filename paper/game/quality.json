@@ -4,12 +4,149 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 10000.0,
+ "cash": 413.31005285013134,
  "fee_per_trade": 0.0,
  "isa": true,
  "eliminated": null,
- "positions": {},
- "trades": [],
+ "positions": {
+  "REL.L": {
+   "qty": 74.0,
+   "cost_base": 2041.66,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "EXPN.L": {
+   "qty": 72.0,
+   "cost_base": 1950.48,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "AUTO.L": {
+   "qty": 369.0,
+   "cost_base": 1870.8300000000002,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "LSEG.L": {
+   "qty": 22.0,
+   "cost_base": 1813.6799999999998,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "GOOGL": {
+   "qty": 7.0,
+   "cost_base": 1868.859947149868,
+   "currency": "USD",
+   "instrument": "share"
+  }
+ },
+ "trades": [
+  {
+   "time": "2026-10-13T14:37:04+00:00",
+   "side": "buy",
+   "symbol": "REL.L",
+   "instrument": "share",
+   "qty": 74,
+   "price": 27.59,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 2041.66,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 10.21,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:21:56+00:00",
+   "fx_source": "identity",
+   "note": "quality opening position (21% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:05+00:00",
+   "side": "buy",
+   "symbol": "EXPN.L",
+   "instrument": "share",
+   "qty": 72,
+   "price": 27.09,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1950.48,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 9.75,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:21:55+00:00",
+   "fx_source": "identity",
+   "note": "quality opening position (20% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:05+00:00",
+   "side": "buy",
+   "symbol": "AUTO.L",
+   "instrument": "share",
+   "qty": 369,
+   "price": 5.07,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1870.83,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 9.35,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:22:00+00:00",
+   "fx_source": "identity",
+   "note": "quality opening position (19% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:06+00:00",
+   "side": "buy",
+   "symbol": "LSEG.L",
+   "instrument": "share",
+   "qty": 22,
+   "price": 82.44,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1813.68,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 9.07,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:22:05+00:00",
+   "fx_source": "identity",
+   "note": "quality opening position (19% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:07+00:00",
+   "side": "buy",
+   "symbol": "GOOGL",
+   "instrument": "share",
+   "qty": 7,
+   "price": 353.615,
+   "currency": "USD",
+   "fx_to_base": 0.755002,
+   "value_base": 1868.86,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 2.8
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:37:03+00:00",
+   "fx_source": "yahoo",
+   "note": "quality opening position (20% target)"
+  }
+ ],
  "marks": [
   {
    "time": "2026-10-13T14:30:08+00:00",
@@ -20,6 +157,16 @@
    "time": "2026-10-13T14:30:26+00:00",
    "equity": 10000.0,
    "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:35:16+00:00",
+   "equity": 10000.0,
+   "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:37:29+00:00",
+   "equity": 9957.92,
+   "cash": 413.31
   }
  ],
  "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice"

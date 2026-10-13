@@ -4,12 +4,41 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 10000.0,
+ "cash": 213.97999999999956,
  "fee_per_trade": 0.0,
  "isa": true,
  "eliminated": null,
- "positions": {},
- "trades": [],
+ "positions": {
+  "VWRP.L": {
+   "qty": 67.0,
+   "cost_base": 9786.02,
+   "currency": "GBP",
+   "instrument": "etf"
+  }
+ },
+ "trades": [
+  {
+   "time": "2026-10-13T14:35:04+00:00",
+   "side": "buy",
+   "symbol": "VWRP.L",
+   "instrument": "etf",
+   "qty": 67,
+   "price": 146.06,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 9786.02,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:20:03+00:00",
+   "fx_source": "identity",
+   "note": "VWRP.L 146.06 above 200d 136.11: risk on"
+  }
+ ],
  "marks": [
   {
    "time": "2026-10-13T14:30:08+00:00",
@@ -20,6 +49,16 @@
    "time": "2026-10-13T14:30:26+00:00",
    "equity": 10000.0,
    "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:35:15+00:00",
+   "equity": 9998.66,
+   "cash": 213.98
+  },
+  {
+   "time": "2026-10-13T14:37:22+00:00",
+   "equity": 9995.98,
+   "cash": 213.98
   }
  ],
  "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice"

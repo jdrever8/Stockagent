@@ -4,12 +4,149 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 10000.0,
+ "cash": 655.9942638731593,
  "fee_per_trade": 0.0,
  "isa": true,
  "eliminated": null,
- "positions": {},
- "trades": [],
+ "positions": {
+  "DGE.L": {
+   "qty": 115.0,
+   "cost_base": 1969.375,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "CRDA.L": {
+   "qty": 53.0,
+   "cost_base": 1848.64,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "TSCO.L": {
+   "qty": 381.0,
+   "cost_base": 1969.77,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "SGE.L": {
+   "qty": 172.0,
+   "cost_base": 1861.04,
+   "currency": "GBP",
+   "instrument": "share"
+  },
+  "MSFT": {
+   "qty": 4.0,
+   "cost_base": 1654.4507361268404,
+   "currency": "USD",
+   "instrument": "share"
+  }
+ },
+ "trades": [
+  {
+   "time": "2026-10-13T14:37:10+00:00",
+   "side": "buy",
+   "symbol": "DGE.L",
+   "instrument": "share",
+   "qty": 115,
+   "price": 17.125,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1969.38,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 9.85,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:22:03+00:00",
+   "fx_source": "identity",
+   "note": "chartist opening position (20% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:11+00:00",
+   "side": "buy",
+   "symbol": "CRDA.L",
+   "instrument": "share",
+   "qty": 53,
+   "price": 34.88,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1848.64,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 9.24,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:21:56+00:00",
+   "fx_source": "identity",
+   "note": "chartist opening position (19% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:11+00:00",
+   "side": "buy",
+   "symbol": "TSCO.L",
+   "instrument": "share",
+   "qty": 381,
+   "price": 5.17,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1969.77,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 9.85,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:22:03+00:00",
+   "fx_source": "identity",
+   "note": "chartist opening position (20% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:12+00:00",
+   "side": "buy",
+   "symbol": "SGE.L",
+   "instrument": "share",
+   "qty": 172,
+   "price": 10.82,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1861.04,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 9.31,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:21:52+00:00",
+   "fx_source": "identity",
+   "note": "chartist opening position (19% target)"
+  },
+  {
+   "time": "2026-10-13T14:37:13+00:00",
+   "side": "buy",
+   "symbol": "MSFT",
+   "instrument": "share",
+   "qty": 4,
+   "price": 547.83,
+   "currency": "USD",
+   "fx_to_base": 0.755002,
+   "value_base": 1654.45,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 2.48
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T14:37:01+00:00",
+   "fx_source": "yahoo",
+   "note": "chartist opening position (20% target)"
+  }
+ ],
  "marks": [
   {
    "time": "2026-10-13T14:30:08+00:00",
@@ -20,6 +157,16 @@
    "time": "2026-10-13T14:30:26+00:00",
    "equity": 10000.0,
    "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:35:16+00:00",
+   "equity": 10000.0,
+   "cash": 10000.0
+  },
+  {
+   "time": "2026-10-13T14:37:32+00:00",
+   "equity": 9957.61,
+   "cash": 655.99
   }
  ],
  "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice"

@@ -119,6 +119,9 @@ def fetch_history(symbol: str, rng: str = "2y") -> Tuple[List[Tuple[str, float]]
     for ts, c in zip(r["timestamp"], closes):
         if c is not None:
             price, norm = _normalise(float(c), ccy)
+            if out and (price / out[-1][1] > 30 or price / out[-1][1] < 1 / 30):
+                # London feeds occasionally print a bar in pence instead of pounds (or vice versa)
+                price = price / 100 if price > out[-1][1] else price * 100
             out.append((dt.datetime.fromtimestamp(ts, dt.timezone.utc).strftime("%Y-%m-%d"), price))
     return out, _normalise(1.0, ccy)[1]
 
