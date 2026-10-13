@@ -336,3 +336,62 @@ def test_dotenv_does_not_override_real_env(tmp_path, monkeypatch):
     assert env("IBKR_ACCOUNT") == "DUX000001" and env("IBKR_PORT") == "7497"
     assert is_paper_account(env("IBKR_ACCOUNT"))
     monkeypatch.delenv("IBKR_ACCOUNT")
+
+
+# --- arena mode ------------------------------------------------------------------
+from stockagent.policies import validate_turn  # noqa: E402
+from stockagent.live.runner import make_limits  # noqa: E402
+
+
+def test_arena_removes_price_band_and_allows_shorts():
+    rails = obs()
+    arena = obs(arena=True, short_capacity=500.0, max_orders=3)
+    far = {"action_type": "buy", "stock": "A", "amount": 1, "price": 30.0}
+    assert validate_order(far, rails)[0] is None and validate_order(far, arena)[0] is not None
+    short = {"action_type": "sell", "stock": "A", "amount": 50, "price": 10.0}   # 5 long + 45 short = 450 notional
+    assert validate_order(short, rails)[0] is None and validate_order(short, arena)[0] is not None
+    assert validate_order(dict(short, amount=60), arena)[0] is None              # 55 short > capacity
+
+
+def test_validate_turn_checks_the_batch_together():
+    o = obs(arena=True, short_capacity=0.0, max_orders=3)
+    buy = {"action_type": "buy", "stock": "A", "amount": 60, "price": 10.0}
+    turn, err = validate_turn({"orders": [buy, buy]}, o)                          # 2 x 600 > 1000 cash
+    assert turn is None and "order 2" in err
+    turn, _ = validate_turn({"orders": [buy], "cancel_open": True}, o)
+    assert turn == {"cancel_open": True, "orders": [dict(buy, reason="")]}
+    assert validate_turn({"orders": [buy] * 4}, o)[0] is None                       # over max_orders
+    assert validate_turn({"action_type": "no"}, obs())[0] == {"cancel_open": False, "orders": []}
+
+
+def test_short_exposure_and_buy_in():
+    a = Account(0, "t", "x", 1_000.0, {"A": -100})
+    prices = {"A": 10.0}
+    assert a.net_worth(prices) == 0.0 and a.short_exposure(prices) == 1_000
+    a.cash = 3_000.0                     # net worth 2000
+    assert a.short_capacity(prices, 1.0) == 1_000
+    a.buy_in(prices, 500)
+    assert a.holdings["A"] >= -50 and a.cash <= 2_500
+
+
+def test_arena_simulation_runs_with_shorts(tmp_path):
+    cfg = SimConfig(days=6, seed=3, out_dir=str(tmp_path), arena=True, short_leverage=1.0)
+    sim = Simulation(cfg, [("mock:arena", 6), ("baseline:fundamental", 6), ("baseline:noise", 6)], workers=1)
+    for a in list(sim.accounts.values())[:6]:      # mock agents start flat so their sells must be shorts
+        a.holdings = {s: 0 for s in cfg.stocks}
+        a.initial_wealth = a.net_worth(sim.market.prices)
+        a.equity_curve = [a.initial_wealth]
+    shares0 = {s: sum(a.holdings.get(s, 0) for a in sim.accounts.values()) for s in cfg.stocks}
+    for d in range(1, cfg.days + 1):
+        sim.run_day(d)
+    summary = sim.finish()
+    assert summary["trades"] > 0
+    assert any(q < 0 for a in sim.accounts.values() for q in a.holdings.values())   # someone went short
+    if not (tmp_path / "buy_ins.csv").exists():   # without forced covers net shares are conserved
+        assert shares0 == {s: sum(a.holdings.get(s, 0) for a in sim.accounts.values()) for s in cfg.stocks}
+    assert "public_post" not in (tmp_path / "forum.jsonl").read_text()
+
+
+def test_limit_overrides_cannot_change_budget():
+    lim = make_limits(10_000, ["X"], 3, {"budget": 1e9, "max_position_pct": 1.0, "max_orders_per_day": 10})
+    assert lim.budget == 10_000 and lim.max_position_pct == 1.0 and lim.max_orders_per_day == 10

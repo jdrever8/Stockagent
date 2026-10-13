@@ -45,6 +45,13 @@ def parse_candidate(spec: str):
     return team, personality or "Balanced"
 
 
+def make_limits(budget: float, symbols: List[str], orders_per_day: int, overrides: Optional[dict]) -> RiskLimits:
+    """Overrides may change any limit except the budget, which always comes from the caller."""
+    fields = {"allowed_symbols": symbols, "max_orders_per_day": orders_per_day}
+    fields.update({k: v for k, v in (overrides or {}).items() if k != "budget"})
+    return RiskLimits(budget=budget, **fields)
+
+
 @dataclasses.dataclass
 class PromotionRules:
     min_days: int = 40                 # ~2 months of forward paper trading
@@ -121,8 +128,7 @@ class PaperLeague:
             pf.settle(date, bars_today)
             equity = pf.value(prices)
             pf.equity.append([date, round(equity, 2)])
-            limits = RiskLimits(budget=st["capital"], allowed_symbols=symbols,
-                                max_orders_per_day=st["orders_per_day"], **st["limits"])
+            limits = make_limits(st["capital"], symbols, st["orders_per_day"], st["limits"])
             gate = RiskGate(limits, RiskState(**c["risk"]))
             gate.start_day(equity)
             policy = self.policies[spec]
@@ -221,7 +227,7 @@ class PaperLeague:
         best = eligible[0]
         champion = {
             "candidate": best["candidate"], "status": "awaiting_approval", "approved_by": None,
-            "approved_budget": None, "evidence": best, "benchmark_return": board["benchmark_return"],
+            "approved_budget": None, "evidence": best, "limits": self.state["limits"], "benchmark_return": board["benchmark_return"],
             "paper_days": board["days"], "rules": dataclasses.asdict(rules),
             "created": dt.datetime.now(dt.timezone.utc).isoformat(),
         }
@@ -267,7 +273,9 @@ def live_step(champion_path: str, state_path: str, feed: Feed, broker, budget: f
     cash = max(0.0, min(acct["cash"], acct["buying_power"]))
     equity = acct["equity"]
 
-    limits_obj = RiskLimits(budget=budget, allowed_symbols=symbols, max_orders_per_day=orders_per_day, **(limits or {}))
+    if limits is None:   # trade under the same limits the champion earned its record with
+        limits = champion.get("limits") or {}
+    limits_obj = make_limits(budget, symbols, orders_per_day, limits)
     gate = RiskGate(limits_obj, RiskState(**state["risk"]) if state["risk"] else None)
     gate.start_day(equity)
 

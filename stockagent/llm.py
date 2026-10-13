@@ -179,6 +179,8 @@ def mock_reply(prompt: str) -> str:
         return json.dumps({"loan": "no"})
     if "TASK: ESTIMATE" in prompt:
         return json.dumps({"buy": [], "sell": [], "loan": "no"})
+    if "TASK: POST" in prompt and "public_post" in prompt:
+        return json.dumps({"public_post": "B looks cheap to me.", "private_note": "keep scalping the spread"})
     if "TASK: POST" in prompt:
         return "Staying disciplined; watching valuations."
     if "TASK: ORDER" in prompt:
@@ -193,6 +195,10 @@ def mock_reply(prompt: str) -> str:
             side = "buy"
         qty = 10 if side == "buy" else max(1, min(10, int(held.group(1))))
         drift = _MOCK_RNG.uniform(-0.01, 0.01)
+        if '"orders"' in prompt:   # arena: two-sided quote, may go short
+            return json.dumps({"cancel_open": _MOCK_RNG.random() < 0.3, "orders": [
+                {"action_type": "buy", "stock": stock, "amount": 10, "price": round(price * 0.995, 2)},
+                {"action_type": "sell", "stock": stock, "amount": 15, "price": round(price * 1.005, 2)}]})
         return json.dumps({"action_type": side, "stock": stock, "amount": qty,
                            "price": round(price * (1 + drift), 2), "reason": "mock"})
     return "{}"

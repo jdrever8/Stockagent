@@ -63,6 +63,32 @@ class Account:
     def net_worth(self, prices: Dict[str, float]) -> float:
         return self.gross_assets(prices) - self.debt()
 
+    def short_exposure(self, prices: Dict[str, float]) -> float:
+        """Market value of short positions plus resting sells that would open new shorts."""
+        held = sum(-q * prices[s] for s, q in self.holdings.items() if q < 0)
+        pending = sum(max(0, r - max(0, self.holdings.get(s, 0))) * prices[s]
+                      for s, r in self.reserved_shares.items())
+        return held + pending
+
+    def short_capacity(self, prices: Dict[str, float], leverage: float) -> float:
+        return max(0.0, leverage * max(0.0, self.net_worth(prices)) - self.short_exposure(prices))
+
+    def buy_in(self, prices: Dict[str, float], max_exposure: float) -> float:
+        """Forced cover of shorts at the last price until exposure <= max_exposure. Returns notional covered."""
+        covered = 0.0
+        for stock in sorted(self.holdings, key=lambda s: self.holdings[s] * prices[s]):
+            exposure = sum(-q * prices[s] for s, q in self.holdings.items() if q < 0)
+            if exposure <= max_exposure:
+                break
+            q = self.holdings[stock]
+            if q >= 0:
+                continue
+            cover = min(-q, int((exposure - max_exposure) // prices[stock]) + 1)
+            self.holdings[stock] += cover
+            self.cash -= cover * prices[stock]
+            covered += cover * prices[stock]
+        return covered
+
     def max_new_loan(self) -> float:
         return max(0.0, self.credit_limit - self.debt())
 

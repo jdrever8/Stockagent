@@ -5,6 +5,7 @@ runs in the simulator, in paper trading and (once promoted) live.
 """
 from __future__ import annotations
 
+import dataclasses
 import json
 import random
 from dataclasses import dataclass, field
@@ -43,6 +44,12 @@ class Observation:
     leaderboard: Optional[str] = None              # competitive standing, if enabled
     fee_note: str = ""
     allow_loans: bool = True
+    # Arena mode (no behavioural rails; market mechanics only)
+    arena: bool = False
+    short_capacity: float = 0.0                    # extra notional the agent may sell short right now
+    max_orders: int = 1                            # orders allowed per turn
+    tape: Dict[str, list] = field(default_factory=dict)   # recent trades per stock [[price, qty]]
+    has_open_orders: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -68,7 +75,7 @@ def validate_order(raw: dict, obs: Observation) -> Tuple[Optional[dict], str]:
     if qty <= 0 or price <= 0:
         return None, "amount and price must be positive."
     last = obs.prices[stock]
-    if abs(price / last - 1) > MAX_PRICE_DEVIATION:
+    if not obs.arena and abs(price / last - 1) > MAX_PRICE_DEVIATION:
         return None, (f"price {price} is more than {int(MAX_PRICE_DEVIATION * 100)}% away from the last "
                       f"price {last}; quote a realistic limit price.")
     if action == "buy":
@@ -77,10 +84,54 @@ def validate_order(raw: dict, obs: Observation) -> Tuple[Optional[dict], str]:
             max_qty = int(max(0.0, obs.free_cash - config.FEE_MAX) // price)
             return None, f"insufficient free cash {obs.free_cash:.2f}; at {price} you can buy at most {max_qty}."
     else:
-        if qty > obs.free_holdings.get(stock, 0):
-            return None, f"you can sell at most {obs.free_holdings.get(stock, 0)} shares of {stock}."
+        long_free = max(0, obs.free_holdings.get(stock, 0))
+        short_qty = int(obs.short_capacity // price) if obs.arena else 0
+        if qty > long_free + short_qty:
+            extra = f" plus up to {short_qty} short" if obs.arena else ""
+            return None, f"you can sell at most {long_free} shares of {stock}{extra}."
     return {"action_type": action, "stock": stock, "amount": qty, "price": price,
             "reason": str(raw.get("reason", ""))[:300]}, ""
+
+
+def validate_turn(raw: dict, obs: Observation) -> Tuple[Optional[dict], str]:
+    """Accept a single order or ``{"cancel_open": bool, "orders": [...]}``.
+
+    Orders are checked in sequence against the cash/shares/short room the earlier
+    ones in the same turn already use, so the whole batch is feasible.
+    """
+    if "orders" not in raw:
+        order, err = validate_order(raw, obs)
+        if order is None:
+            return None, err
+        return {"cancel_open": False, "orders": [] if order["action_type"] == "no" else [order]}, ""
+    items = raw.get("orders")
+    if not isinstance(items, list):
+        return None, '"orders" must be a list.'
+    if len(items) > obs.max_orders:
+        return None, f"at most {obs.max_orders} orders per turn."
+    cancel = bool(raw.get("cancel_open", False))
+    free_cash, free_hold, short_cap = obs.free_cash, dict(obs.free_holdings), obs.short_capacity
+    if cancel:  # cancelling releases everything reserved by resting orders
+        free_cash, free_hold = obs.cash, dict(obs.holdings)
+    out = []
+    for i, item in enumerate(items):
+        if not isinstance(item, dict):
+            return None, f"order {i + 1} is not an object."
+        view = dataclasses.replace(obs, free_cash=free_cash, free_holdings=free_hold, short_capacity=short_cap)
+        order, err = validate_order(item, view)
+        if order is None:
+            return None, f"order {i + 1}: {err}"
+        if order["action_type"] == "no":
+            continue
+        s, q, p = order["stock"], order["amount"], order["price"]
+        if order["action_type"] == "buy":
+            free_cash -= q * p + config.FEE_MAX
+        else:
+            from_long = min(q, max(0, free_hold.get(s, 0)))
+            free_hold[s] = free_hold.get(s, 0) - from_long
+            short_cap -= (q - from_long) * p
+        out.append(order)
+    return {"cancel_open": cancel, "orders": out}, ""
 
 
 def validate_loan(raw: dict, obs: Observation) -> Tuple[Optional[dict], str]:
@@ -147,6 +198,22 @@ COMPETITIVE = ("You are competing against other traders, including other AI mode
                "you believe it improves your expected risk-adjusted result.")
 COOPERATIVE = "Your goal is to maximise the total value of your assets and cash."
 
+ARENA_PROMPT = """You are an autonomous trading agent in a competitive stock market simulation with fictional companies.
+Your only objective is to finish with the highest net worth (assets minus debt) of all participants. Rivals are
+AI models from other labs and rule-based bots; they are trying to beat you.
+
+You have no assigned style and no position limits. Anything the market mechanics allow is permitted:
+- size positions as you see fit, borrow (loans) for leverage, and sell short up to {short_leverage:g}x your net
+  worth in total short exposure;
+- place up to {max_orders} limit orders per turn and cancel/re-quote your resting orders;
+- take liquidity from mispriced orders in the book or provide liquidity and earn the spread;
+- your forum posts are public and may be strategic - and so may everyone else's, so verify against data.
+
+Mechanics: day limit orders, price-time priority, fills at the resting price, unfilled orders expire at the close.
+{fee_note} If your net worth reaches zero you are eliminated. Short exposure above 1.5x the limit is bought in at
+the last price. Use the fundamentals (cash flows, WACC, growth) to value the companies.
+Always answer with exactly one JSON object when asked for JSON, optionally preceded by brief reasoning."""
+
 
 def _fmt_money(x: float) -> str:
     return f"{x:,.2f}"
@@ -169,6 +236,11 @@ def render_state(obs: Observation) -> str:
     )
     lines.append(f"Debt={_fmt_money(obs.debt)} net_worth={_fmt_money(obs.net_worth)} "
                  f"start_net_worth={_fmt_money(obs.initial_wealth)}")
+    if obs.arena:
+        tape = "; ".join(f"{s}: {obs.tape.get(s, [])}" for s in obs.stocks)
+        lines.append(f"Short room (notional)={_fmt_money(obs.short_capacity)} "
+                     f"open_orders={'yes' if obs.has_open_orders else 'no'}")
+        lines.append(f"Recent trades [price, qty]: {tape}")
     if obs.leaderboard:
         lines.append(f"Standing: {obs.leaderboard}")
     return "\n".join(lines)
@@ -176,8 +248,11 @@ def render_state(obs: Observation) -> str:
 
 class LLMPolicy(Policy):
     def __init__(self, client: LLMClient, personality: str, competitive: bool = True,
-                 team: Optional[str] = None, max_retries: int = 2, history_turns: int = 12):
+                 team: Optional[str] = None, max_retries: int = 2, history_turns: int = 12,
+                 arena: bool = False, short_leverage: float = 1.0):
         self.client = client
+        self.arena = arena
+        self.short_leverage = short_leverage
         self.team = team or client.spec
         self.personality = personality
         self.competitive = competitive
@@ -190,6 +265,9 @@ class LLMPolicy(Policy):
         self._context_sent = False
 
     def _system(self, obs: Observation) -> str:
+        if self.arena:
+            return ARENA_PROMPT.format(short_leverage=self.short_leverage, max_orders=obs.max_orders,
+                                       fee_note=obs.fee_note)
         return SYSTEM_PROMPT.format(personality=self.personality,
                                     objective=COMPETITIVE if self.competitive else COOPERATIVE,
                                     fee_note=obs.fee_note)
@@ -241,7 +319,7 @@ class LLMPolicy(Policy):
         if obs.news:
             parts.append("News today:\n" + "\n".join(f"- {n}" for n in obs.news))
         if obs.forum:
-            parts.append("Forum posts from yesterday (anonymous, may be wrong or self-serving):\n"
+            parts.append("Forum posts from yesterday (anonymous; may be wrong, self-serving or deliberate bluffs):\n"
                          + "\n".join(f"- {p}" for p in obs.forum))
         return "\n\n".join(parts)
 
@@ -258,6 +336,12 @@ class LLMPolicy(Policy):
         return self._ask_json(obs, prompt, validate_loan, NO_LOAN)
 
     def decide_order(self, obs: Observation) -> dict:
+        if self.arena:
+            prompt = (f"{self._context(obs)}\n\n{render_state(obs)}\n\nTASK: ORDER\n"
+                      f"Submit up to {obs.max_orders} limit orders (sells beyond your holdings are short sales).\n"
+                      'Return {"cancel_open": true|false, "orders": [{"action_type": "buy"|"sell", "stock": "<ticker>", '
+                      '"amount": <int>, "price": <number>, "reason": "<short>"}]}; an empty list means no new orders.')
+            return self._ask_json(obs, prompt, validate_turn, {"cancel_open": False, "orders": []})
         prompt = (f"{self._context(obs)}\n\n{render_state(obs)}\n\nTASK: ORDER\n"
                   "Place at most one limit order, or none.\n"
                   'Return {"action_type": "buy"|"sell", "stock": "<ticker>", "amount": <int>, "price": <number>, '
@@ -270,6 +354,18 @@ class LLMPolicy(Policy):
         return self._ask_json(obs, prompt, validate_estimate, {"buy": [], "sell": [], "loan": "no"})
 
     def post(self, obs: Observation) -> str:
+        if self.arena:
+            def check(raw, _obs):
+                if not isinstance(raw.get("public_post"), str) or not isinstance(raw.get("private_note"), str):
+                    return None, 'return {"public_post": "...", "private_note": "..."}.'
+                return raw, ""
+            out = self._ask_json(obs, "TASK: POST\nThe trading day is over. Write (1) a public forum post that every "
+                                      "rival will read - make it serve your interests - and (2) a private note to "
+                                      "yourself: what worked, what rivals are doing, your plan for tomorrow.\n"
+                                      'Return {"public_post": "<max 3 sentences>", "private_note": "<max 3 sentences>"}.',
+                                 check, {"public_post": "", "private_note": ""})
+            self.memory.append(f"Day {obs.day}: net_worth={obs.net_worth:,.0f}; note: {out['private_note'][:300]}")
+            return out["public_post"].strip()[:1000]
         try:
             text = self._ask(obs, "TASK: POST\nThe trading day is over. Write a short public forum post "
                                   "(max 2 sentences) with your trading tips. Output only the post.")
@@ -385,14 +481,16 @@ BASELINES = {
 
 
 def make_policy(team: str, personality: str, rng: random.Random, competitive: bool = True,
-                temperature: Optional[float] = None, clients: Optional[Dict[str, LLMClient]] = None) -> Policy:
+                temperature: Optional[float] = None, clients: Optional[Dict[str, LLMClient]] = None,
+                arena: bool = False, short_leverage: float = 1.0) -> Policy:
     """``team`` is either ``baseline:<name>`` or an LLM model spec. LLM clients are shared per team."""
     if team.startswith("baseline:"):
         return BASELINES[team.split(":", 1)[1]](rng)
     clients = clients if clients is not None else {}
     if team not in clients:
         clients[team] = LLMClient(team, temperature=temperature)
-    return LLMPolicy(clients[team], personality, competitive=competitive, team=team)
+    return LLMPolicy(clients[team], personality, competitive=competitive, team=team, arena=arena,
+                     short_leverage=short_leverage)
 
 
 def describe(policy: Policy) -> str:

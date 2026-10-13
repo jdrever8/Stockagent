@@ -25,7 +25,8 @@ def sim_config(a) -> SimConfig:
     return SimConfig(stocks=a.stocks.split(","), days=a.days, sessions=a.sessions, seed=a.seed,
                      out_dir=a.out, enable_bbs=not a.no_bbs, enable_reports=not a.no_reports,
                      enable_loans=not a.no_loans, enable_events=not a.no_events,
-                     competitive=not a.cooperative)
+                     competitive=not a.cooperative, arena=a.arena, short_leverage=a.short_leverage,
+                     max_orders=a.max_orders)
 
 
 def add_sim_args(p):
@@ -41,6 +42,11 @@ def add_sim_args(p):
     for flag in ("no-bbs", "no-reports", "no-loans", "no-events"):
         p.add_argument(f"--{flag}", action="store_true", help="paper 5.5 ablation")
     p.add_argument("--cooperative", action="store_true", help="do not tell agents they are competing")
+    p.add_argument("--arena", action="store_true",
+                   help="no behavioural rails: short selling, several orders per turn, no price band, "
+                        "no assigned personality, strategic forum")
+    p.add_argument("--short-leverage", type=float, default=1.0, help="arena: max short exposure / net worth")
+    p.add_argument("--max-orders", type=int, default=3, help="arena: orders per turn")
 
 
 def make_feed(a, ib=None, live=False):
@@ -78,6 +84,8 @@ def main(argv=None):
             p.add_argument("--capital", type=float, default=100_000)
             p.add_argument("--temperature", type=float, default=None)
             p.add_argument("--all", action="store_true", help="process every pending date (CSV replay)")
+            p.add_argument("--limits", default=None,
+                           help='JSON RiskLimits overrides for a new league, e.g. \'{"max_position_pct": 1.0}\'')
         else:
             p.add_argument("--min-days", type=int, default=40)
             p.add_argument("--out", default="res/champion.json")
@@ -92,6 +100,8 @@ def main(argv=None):
     p.add_argument("--real-money", action="store_true",
                    help="live account (IBKR port 4001 / Alpaca live endpoint); needs sign-off")
     p.add_argument("--no-confirm", action="store_true", help="skip per-order confirmation")
+    p.add_argument("--limits", default=None,
+                   help="JSON RiskLimits overrides; defaults to the limits the champion was paper-traded under")
     p.add_argument("--csv", default=None)
     p.add_argument("--anonymize", action="store_true")
 
@@ -119,7 +129,8 @@ def main(argv=None):
         from stockagent.live.runner import PaperLeague
         feed = make_feed(a)
         league = PaperLeague(a.state, feed, a.candidates.split(",") if a.candidates else None,
-                             capital=a.capital, temperature=a.temperature)
+                             capital=a.capital, temperature=a.temperature,
+                             limits=json.loads(a.limits) if a.limits else None)
         dates = league.pending_dates()
         if not a.all:
             dates = dates[-1:]
@@ -160,7 +171,8 @@ def main(argv=None):
             broker = AlpacaBroker(live=a.real_money)
         try:
             feed = make_feed(a, ib=getattr(broker, "ib", None), live=a.real_money)
-            placed = live_step(a.champion, a.state, feed, broker, a.budget, confirm)
+            placed = live_step(a.champion, a.state, feed, broker, a.budget, confirm,
+                               limits=json.loads(a.limits) if a.limits else None)
         finally:
             if hasattr(broker, "close"):
                 broker.close()

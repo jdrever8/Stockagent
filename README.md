@@ -53,6 +53,26 @@ How the competition works:
   retries. Use `--days`, population sizes and cheap models to fit the budget. Token usage per model is
   written to `summary.json`.
 
+### Arena mode: no rails
+
+`--arena` strips every behavioural constraint and leaves only market mechanics:
+
+| | default (paper-faithful) | `--arena` |
+|---|---|---|
+| Objective | ranked on risk-adjusted growth | finish with the highest net worth; ranking is all that matters |
+| Personality | assigned (Conservative, Aggressive, …) | none: the model picks its own strategy |
+| Orders per turn | 1 | up to `--max-orders` (default 3), and it can cancel and re-quote |
+| Price band | ±20% from last | none (fat-finger orders are a gift to rivals) |
+| Short selling | no | yes, up to `--short-leverage` × net worth; bought in above 1.5× that |
+| Market view | top 5 levels | top 10 levels plus the trade tape |
+| Forum | trading tips | strategic public posts, which may bluff, plus a private note carried to the next day |
+| Valuation inputs | cash-flow history | plus WACC and growth, so it can build its own DCF |
+
+What still binds in the arena is what binds in any real market:
+- cash, shares and margin;
+- loan limits;
+- bankruptcy eliminates the agent.
+
 Paper ablations (section 5.5): `--no-bbs --no-reports --no-loans --no-events`. Two more switches:
 `--stocks A,B,C,D` adds the repo's two extra companies, and `--cooperative` removes the competitive framing.
 
@@ -102,6 +122,9 @@ python main.py promote --symbols SPY,QQQ,IWM,TLT,GLD        # after >= 40 days
 * **Leakage:** LLMs have memorised historical prices of real tickers. Forward paper trading is clean.
   Historical replay (`--csv bars.csv --all`) is only meaningful with `--anonymize`, which renames tickers to
   S1..Sn and rebases each one to 100.
+* Risk limits can be changed with `--limits '{"max_position_pct": 1.0, "kill_drawdown_pct": 0.5}'` when a
+  league is created. The champion then trades live under the same limits it was paper-traded with, unless
+  `live --limits` overrides them. The budget cannot be overridden.
 * `promote` writes `champion.json` with status `awaiting_approval`. Rules are in `PromotionRules`:
   * at least 40 days of paper trading;
   * beats equal-weight buy-and-hold;

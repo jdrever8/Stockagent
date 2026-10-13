@@ -116,6 +116,14 @@ HISTORY: Dict[str, Dict[str, List[float]]] = {
     },
 }
 
+# Valuation inputs (paper Tables 3 and 5; C/D repo extension): WACC at D1/D78/D144, sustainable growth.
+VALUATION_INPUTS: Dict[str, Dict[str, object]] = {
+    "A": {"wacc": [0.0885, 0.0878, 0.0880], "growth": 0.05},
+    "B": {"wacc": [0.0879, 0.0869, 0.0872], "growth": 0.05},
+    "C": {"wacc": [0.0774, 0.0711, 0.0732], "growth": 0.055},
+    "D": {"wacc": [0.0732, 0.0648, 0.0676], "growth": 0.04},
+}
+
 QUARTERLY_REPORTS: Dict[str, List[str]] = {
     "A": [
         "Revenue growth (YoY) 9.49%, revenue 4483.99M, gross margin 41.05%, net profit 856.67M, cash flow 756.75M.",
@@ -177,6 +185,14 @@ class SimConfig:
     events: List[MarketEvent] = field(default_factory=lambda: list(DEFAULT_EVENTS))
     out_dir: str = "res"
     competitive: bool = True        # tell agents they are ranked against each other
+    # Arena: remove behavioural rails, keep only market mechanics (short selling, several
+    # orders per turn, no price band, no assigned personality, strategic forum).
+    arena: bool = False
+    short_leverage: float = 1.0     # max short exposure as a multiple of net worth
+    max_orders: int = 3             # orders per turn in arena mode (1 otherwise)
+
+    def orders_per_turn(self) -> int:
+        return self.max_orders if self.arena else 1
 
     def initial_price(self, stock: str) -> float:
         return round(ideal_price_midpoint(stock, 1), 2)

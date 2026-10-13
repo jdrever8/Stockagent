@@ -11,7 +11,7 @@ from .agents import Account, random_endowment
 from .config import SimConfig
 from .llm import LLMClient
 from .market import Market, Order
-from .policies import Observation, Policy, make_policy, validate_loan, validate_order
+from .policies import Observation, Policy, make_policy, validate_loan, validate_turn
 from .records import Recorder
 
 log = logging.getLogger("stockagent")
@@ -65,7 +65,8 @@ class Simulation:
                 self.accounts[agent_id] = acct
                 self.policies[agent_id] = make_policy(team, personality, random.Random(self.rng.random()),
                                                       competitive=cfg.competitive, temperature=temperature,
-                                                      clients=self.clients)
+                                                      clients=self.clients, arena=cfg.arena,
+                                                      short_leverage=cfg.short_leverage)
                 agent_id += 1
         self.recorder.json("config", {"sim": cfg, "population": population})
 
@@ -81,7 +82,7 @@ class Simulation:
         return Observation(
             day=day, session=session, sessions_per_day=self.cfg.sessions, stocks=self.cfg.stocks,
             prices=dict(prices), price_history={s: h[-20:] for s, h in self.history.items()},
-            books={s: b.summary() for s, b in self.market.books.items()},
+            books={s: b.summary(10 if self.cfg.arena else 5) for s, b in self.market.books.items()},
             cash=acct.cash, free_cash=acct.free_cash(), holdings=dict(acct.holdings),
             free_holdings={s: acct.free_shares(s) for s in self.cfg.stocks},
             debt=acct.debt(), loans=[{"amount": l.amount, "due_day": l.due_day} for l in acct.loans],
@@ -93,7 +94,22 @@ class Simulation:
             leaderboard=self.standing(acct) if self.cfg.competitive else None,
             fee_note=f"Fee per fill: {config.FEE_PER_SHARE}/share, min {config.FEE_MIN}, max {config.FEE_MAX}.",
             allow_loans=self.cfg.enable_loans,
+            arena=self.cfg.arena,
+            short_capacity=acct.short_capacity(prices, self.cfg.short_leverage) if self.cfg.arena else 0.0,
+            max_orders=self.cfg.orders_per_turn(),
+            tape=self.tape() if self.cfg.arena else {},
+            has_open_orders=any(o.agent_id == acct.agent_id for b in self.market.books.values()
+                                for o in b.bids + b.asks),
         )
+
+    def tape(self, n: int = 8) -> Dict[str, list]:
+        out: Dict[str, list] = {s: [] for s in self.cfg.stocks}
+        for t in reversed(self.market.trades):
+            if len(out[t.stock]) < n:
+                out[t.stock].append([t.price, t.qty])
+            if all(len(v) >= n for v in out.values()):
+                break
+        return {s: list(reversed(v)) for s, v in out.items()}
 
     def standing(self, acct: Account) -> str:
         ranked = sorted(self.active(), key=lambda a: a.equity_curve[-1] / a.initial_wealth, reverse=True)
@@ -124,11 +140,17 @@ class Simulation:
             if day in config.REPAYMENT_DAYS:
                 acct.pay_interest()
             acct.repay_matured(day)
+            if cfg.arena:   # margin: shorts far beyond the limit are bought in at the last price
+                limit = cfg.short_leverage * max(0.0, acct.net_worth(prices))
+                if acct.short_exposure(prices) > 1.5 * limit:
+                    covered = acct.buy_in(prices, limit)
+                    self.recorder.row("buy_ins", {"day": day, "agent": acct.agent_id, "team": acct.team,
+                                                  "covered": round(covered, 2)})
             if acct.cash < 0:
                 acct.liquidate_for_cash(prices)
-                if acct.cash < 0 or acct.net_worth(prices) <= 0:
-                    acct.bankrupt = True
-                    log.info("day %d: agent %d (%s) bankrupt", day, acct.agent_id, acct.team)
+            if acct.cash < 0 or acct.net_worth(prices) <= 0:
+                acct.bankrupt = True
+                log.info("day %d: agent %d (%s) bankrupt", day, acct.agent_id, acct.team)
 
         # Events and quarterly reports (paper 4.3)
         self.news = []
@@ -164,13 +186,20 @@ class Simulation:
             for acct in order:
                 obs = self.observe(acct, day, session)
                 raw = self.policies[acct.agent_id].decide_order(obs)
-                action, error = validate_order(raw, obs)   # baselines are validated too
-                self.recorder.row("orders", {"day": day, "session": session, "agent": acct.agent_id,
-                                             "team": acct.team, "action": (action or raw).get("action_type"),
-                                             "stock": (action or {}).get("stock"), "qty": (action or {}).get("amount"),
-                                             "price": (action or {}).get("price"), "error": error,
-                                             "reason": (action or {}).get("reason", "")})
-                if action and action["action_type"] != "no":
+                turn, error = validate_turn(raw, obs)   # baselines are validated too
+                if turn and turn["cancel_open"]:
+                    self.market.cancel_agent_orders(acct.agent_id, self.accounts)
+                orders = turn["orders"] if turn else []
+                if not orders:
+                    self.recorder.row("orders", {"day": day, "session": session, "agent": acct.agent_id,
+                                                 "team": acct.team, "action": "no", "stock": None, "qty": None,
+                                                 "price": None, "error": error, "reason": ""})
+                for action in orders:
+                    self.recorder.row("orders", {"day": day, "session": session, "agent": acct.agent_id,
+                                                 "team": acct.team, "action": action["action_type"],
+                                                 "stock": action["stock"], "qty": action["amount"],
+                                                 "price": action["price"], "error": "",
+                                                 "reason": action.get("reason", "")})
                     trades = self.market.submit(
                         Order(acct.agent_id, action["action_type"], action["stock"], action["amount"], action["price"]),
                         self.accounts, day, session)
@@ -246,4 +275,7 @@ def background_text(stocks: List[str]) -> str:
         lines.append(f"  Last 12 quarters revenue (M): {h['revenue']}")
         lines.append(f"  Net profit (M): {h['net_profit']}")
         lines.append(f"  Cash flow (M): {h['cash_flow']}")
+        v = config.VALUATION_INPUTS.get(s)
+        if v:
+            lines.append(f"  WACC: {v['wacc'][0]:.2%}; sustainable growth rate: {v['growth']:.1%}")
     return "\n".join(lines)
