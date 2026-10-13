@@ -4,7 +4,7 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": -2374.9958362858247,
+ "cash": -2375.00158907765,
  "fee_per_trade": 0.0,
  "isa": true,
  "eliminated": null,
@@ -307,10 +307,20 @@
    "time": "2026-10-13T17:10:21+00:00",
    "equity": 10024.75,
    "cash": -2375.0
+  },
+  {
+   "time": "2026-10-13T17:31:32+00:00",
+   "equity": 10020.49,
+   "cash": -2375.0
+  },
+  {
+   "time": "2026-10-13T17:34:35+00:00",
+   "equity": 10018.43,
+   "cash": -2375.0
   }
  ],
  "rules": "broke out of house rules: margin up to 0.3x equity; margin interest 5.25%",
- "interest_accrued_to": "2026-10-13T17:10:18+00:00",
+ "interest_accrued_to": "2026-10-13T17:34:33+00:00",
  "margin_ratio": 0.3,
  "margin_rate": 0.0525,
  "breakouts": [
@@ -323,5 +333,5 @@
    ]
   }
  ],
- "interest_paid": 0.0024
+ "interest_paid": 0.0081
 }

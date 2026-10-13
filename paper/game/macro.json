@@ -4,14 +4,14 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 1594.0951429671572,
+ "cash": 2009.6651429671572,
  "fee_per_trade": 0.0,
  "isa": false,
  "eliminated": null,
  "positions": {
   "CSH2.L": {
-   "qty": 2.0,
-   "cost_base": 2511.74672,
+   "qty": 3.0,
+   "cost_base": 3767.44672,
    "currency": "GBP",
    "instrument": "etf"
   },
@@ -25,12 +25,6 @@
    "qty": 138.0,
    "cost_base": 1474.8131370328424,
    "currency": "USD",
-   "instrument": "etf"
-  },
-  "VUSA.L": {
-   "qty": 15.0,
-   "cost_base": 1674.255,
-   "currency": "GBP",
    "instrument": "etf"
   },
   "VUKE.L": {
@@ -220,6 +214,48 @@
    "quote_time": "2026-10-13T15:35:19+00:00",
    "fx_source": "identity",
    "note": "MAC-7 term-premium short: long gilts vs sticky inflation and rising global yields"
+  },
+  {
+   "time": "2026-10-13T17:34:17+00:00",
+   "side": "sell",
+   "symbol": "VUSA.L",
+   "instrument": "etf",
+   "qty": 15.0,
+   "price": 111.418,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1671.27,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": -2.98,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:26+00:00",
+   "fx_source": "identity",
+   "note": "#off-book ep.4: group is 56% US tech and +112% net long after reversion's NVDA/AMZN signals; macro is the group's designated hedge, exits its S&P 500 sleeve into money market (MAC-1 discretion, chip selloff + bank/J&J misses)"
+  },
+  {
+   "time": "2026-10-13T17:34:18+00:00",
+   "side": "buy",
+   "symbol": "CSH2.L",
+   "instrument": "etf",
+   "qty": 1,
+   "price": 1255.7,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1255.7,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:23+00:00",
+   "fx_source": "identity",
+   "note": "#off-book ep.4: park S&P 500 proceeds in GBP money market"
   }
  ],
  "marks": [
@@ -277,10 +313,20 @@
    "time": "2026-10-13T17:10:18+00:00",
    "equity": 9999.29,
    "cash": 1594.1
+  },
+  {
+   "time": "2026-10-13T17:31:29+00:00",
+   "equity": 9999.18,
+   "cash": 1594.1
+  },
+  {
+   "time": "2026-10-13T17:34:33+00:00",
+   "equity": 9998.96,
+   "cash": 2009.67
   }
  ],
  "rules": "broke out of house rules: left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)",
- "interest_accrued_to": "2026-10-13T17:10:12+00:00",
+ "interest_accrued_to": "2026-10-13T17:34:30+00:00",
  "breakouts": [
   {
    "time": "2026-10-13T16:58:58+00:00",

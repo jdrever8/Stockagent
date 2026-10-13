@@ -4,14 +4,14 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 2474.4400000000005,
+ "cash": 2743.1051309532804,
  "fee_per_trade": 0.0,
  "isa": false,
  "eliminated": null,
  "positions": {
   "CSH2.L": {
-   "qty": 6.0,
-   "cost_base": 7534.2,
+   "qty": 2.0,
+   "cost_base": 2511.3999999999996,
    "currency": "GBP",
    "instrument": "etf"
   },
@@ -25,6 +25,18 @@
    "qty": 28.0,
    "cost_base": 1959.1599999999999,
    "currency": "GBP",
+   "instrument": "share"
+  },
+  "NVDA": {
+   "qty": 14.0,
+   "cost_base": 2393.7051852970035,
+   "currency": "USD",
+   "instrument": "share"
+  },
+  "AMZN": {
+   "qty": 12.0,
+   "cost_base": 2353.3096837497164,
+   "currency": "USD",
    "instrument": "share"
   }
  },
@@ -112,6 +124,69 @@
    "quote_time": "2026-10-13T15:36:23+00:00",
    "fx_source": "identity",
    "note": "open pair: long RIO.L / short AAL.L, z -2.09; idle 80% in CSH2.L"
+  },
+  {
+   "time": "2026-10-13T17:33:33+00:00",
+   "side": "sell",
+   "symbol": "CSH2.L",
+   "instrument": "etf",
+   "qty": 4.0,
+   "price": 1255.7,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 5022.8,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:23+00:00",
+   "fx_source": "identity",
+   "note": "hold pair RIO.L/AAL.L: z -2.09; enter NVDA: RSI2 6.5, above 200d; enter AMZN: RSI2 9.1, above 200d; idle 30% in CSH2.L"
+  },
+  {
+   "time": "2026-10-13T17:33:34+00:00",
+   "side": "buy",
+   "symbol": "NVDA",
+   "instrument": "share",
+   "qty": 14.0,
+   "price": 226.53,
+   "currency": "USD",
+   "fx_to_base": 0.754774,
+   "value_base": 2393.71,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 3.59
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T17:33:30+00:00",
+   "fx_source": "yahoo",
+   "note": "hold pair RIO.L/AAL.L: z -2.09; enter NVDA: RSI2 6.5, above 200d; enter AMZN: RSI2 9.1, above 200d; idle 30% in CSH2.L"
+  },
+  {
+   "time": "2026-10-13T17:33:35+00:00",
+   "side": "buy",
+   "symbol": "AMZN",
+   "instrument": "share",
+   "qty": 12.0,
+   "price": 259.825,
+   "currency": "USD",
+   "fx_to_base": 0.754774,
+   "value_base": 2353.31,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 3.53
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T17:33:33+00:00",
+   "fx_source": "yahoo",
+   "note": "hold pair RIO.L/AAL.L: z -2.09; enter NVDA: RSI2 6.5, above 200d; enter AMZN: RSI2 9.1, above 200d; idle 30% in CSH2.L"
   }
  ],
  "marks": [
@@ -169,10 +244,20 @@
    "time": "2026-10-13T17:10:12+00:00",
    "equity": 9990.2,
    "cash": 2474.44
+  },
+  {
+   "time": "2026-10-13T17:31:24+00:00",
+   "equity": 9990.2,
+   "cash": 2474.44
+  },
+  {
+   "time": "2026-10-13T17:34:29+00:00",
+   "equity": 9982.79,
+   "cash": 2743.11
   }
  ],
  "rules": "broke out of house rules: left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)",
- "interest_accrued_to": "2026-10-13T17:10:10+00:00",
+ "interest_accrued_to": "2026-10-13T17:34:26+00:00",
  "breakouts": [
   {
    "time": "2026-10-13T16:58:58+00:00",
