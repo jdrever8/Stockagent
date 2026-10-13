@@ -324,3 +324,15 @@ def test_ibkr_feed_and_live_step(tmp_path, monkeypatch):
     champ.write_text(json.dumps({"candidate": "mock:a", "approved_by": None, "approved_budget": None}))
     live_step(str(champ), str(tmp_path / "s.json"), feed, IBKRBroker(live=False, ib=ib), 10_000, lambda o: True)
     assert all(p[6] == "DU123" and p[2] * p[3] <= 1_000 + 1e-6 for p in ib.placed)
+
+
+def test_dotenv_does_not_override_real_env(tmp_path, monkeypatch):
+    from stockagent.config import env, load_dotenv
+    f = tmp_path / ".env"
+    f.write_text("# c\nIBKR_ACCOUNT=DUX000001\nIBKR_PORT='4002'\n")
+    monkeypatch.delenv("IBKR_ACCOUNT", raising=False)
+    monkeypatch.setenv("IBKR_PORT", "7497")
+    load_dotenv(str(f))
+    assert env("IBKR_ACCOUNT") == "DUX000001" and env("IBKR_PORT") == "7497"
+    assert is_paper_account(env("IBKR_ACCOUNT"))
+    monkeypatch.delenv("IBKR_ACCOUNT")

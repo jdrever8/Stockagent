@@ -73,7 +73,9 @@ IBKR is supported through the TWS / IB Gateway socket API (`pip install ib_async
    - paper mode refuses any account that doesn't start with `D`, and `--real-money` refuses one that does;
    - with several accounts on one login, you must name the dedicated one in `IBKR_ACCOUNT`;
    - `cancel_all` only cancels orders tagged `sa-…`, never your manual orders.
-4. **Market data.** Daily bars come from IBKR historical data and need US equity subscriptions. Alternatives
+4. **Local settings.** Run `cp .env.example .env` and put your keys and `IBKR_ACCOUNT` (your DU… paper ID)
+   in `.env`. The file is git-ignored and loaded automatically.
+5. **Market data.** Daily bars come from IBKR historical data and need US equity subscriptions. Alternatives
    are `--feed alpaca` (free IEX data) or `--csv`.
 
 ## Stage 2: paper trading on real prices

@@ -13,7 +13,7 @@ import json
 import logging
 import sys
 
-from stockagent.config import SimConfig
+from stockagent.config import SimConfig, load_dotenv
 from stockagent.league import QualifyRules, render_leaderboard, run_league
 from stockagent.simulation import Simulation, parse_population
 
@@ -95,6 +95,7 @@ def main(argv=None):
     p.add_argument("--csv", default=None)
     p.add_argument("--anonymize", action="store_true")
 
+    load_dotenv()
     a = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO if a.verbose else logging.WARNING,
                         format="%(asctime)s %(levelname)s %(message)s")

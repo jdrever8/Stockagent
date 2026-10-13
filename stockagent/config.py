@@ -11,6 +11,19 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
 
+def load_dotenv(path: str = ".env") -> None:
+    """Load KEY=VALUE lines from a local, git-ignored .env file. Real env vars win."""
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip("'\""))
+
+
 def env(name: str, default: str = "") -> str:
     value = os.getenv(name, "").strip()
     return value or default
