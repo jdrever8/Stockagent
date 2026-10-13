@@ -128,6 +128,11 @@ def main(argv=None):
     q.add_argument("--currency")
     q.add_argument("--fx", type=float)
     q.add_argument("--source")
+    gsub.add_parser("rules", help="show every agent's own rulebook")
+    q = gsub.add_parser("amend", help="an agent's once-a-day rulebook amendment")
+    q.add_argument("agent")
+    q.add_argument("changes", help='JSON list, e.g. \'[{"op": "add", "text": "...", "rationale": "...", '
+                                   '"params": {"top_n": 2}}, {"op": "retire", "id": "MOM-1"}]\'')
     q = gsub.add_parser("journal", help="append to an agent's journal")
     q.add_argument("agent")
     q.add_argument("text")
@@ -227,6 +232,12 @@ def main(argv=None):
                                                         currency=a.currency)
             game.journal(a.agent, f"{a.side} {a.qty} {a.symbol} @ {entry['price']} {entry['currency']}: {a.note}")
             print(json.dumps(entry, indent=2))
+        elif a.game_cmd == "rules":
+            print(game.render_rulebooks())
+        elif a.game_cmd == "amend":
+            rules = game.amend_rules(a.agent, json.loads(a.changes))
+            print(json.dumps(rules["active"], indent=2))
+            game.render_rulebooks()
         elif a.game_cmd == "journal":
             game.journal(a.agent, a.text)
 

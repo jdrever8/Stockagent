@@ -483,3 +483,45 @@ def test_game_runs_systematic_agents(tmp_path, monkeypatch):
 
 
 STRATS = ["momentum", "reversion", "passive"]
+
+
+def test_agent_rulebooks_daily_limit_and_params(tmp_path, monkeypatch):
+    root = str(tmp_path / "game")
+    game_mod.init_game(root)
+    with pytest.raises(PermissionError, match="from 2026-10-14"):
+        game_mod.amend_rules("momentum", [{"op": "add", "text": "x", "rationale": "y"}], root, today="2026-10-13")
+    rules = game_mod.amend_rules("momentum", [
+        {"op": "add", "text": "Concentrate in the top 2 on a 3-month lookback", "rationale": "faster turns",
+         "params": {"top_n": 2, "lookback": 63}}], root, today="2026-10-14")
+    assert rules["active"][0]["id"] == "MOM-1"
+    p = game_mod.active_params("momentum", root)
+    assert p["top_n"] == 2 and p["lookback"] == 63 and p["skip"] == 5
+    with pytest.raises(PermissionError, match="once a day"):
+        game_mod.amend_rules("momentum", [{"op": "retire", "id": "MOM-1"}], root, today="2026-10-14")
+    with pytest.raises(ValueError, match="unknown parameters"):
+        game_mod.amend_rules("momentum", [{"op": "add", "text": "t", "rationale": "r", "params": {"margin": 2}}],
+                             root, today="2026-10-15")
+    with pytest.raises(ValueError, match="text"):
+        game_mod.amend_rules("macro", [{"op": "add", "text": "t", "rationale": "r", "params": {"top_n": 1}}],
+                             root, today="2026-10-15")
+    game_mod.amend_rules("macro", [{"op": "add", "text": "Hold at least 20% in money market", "rationale": "dry powder"}],
+                         root, today="2026-10-15")
+    game_mod.amend_rules("momentum", [{"op": "retire", "id": "MOM-1", "rationale": "too twitchy"},
+                                      {"op": "add", "text": "Top 4", "rationale": "diversify", "params": {"top_n": 4}}],
+                         root, today="2026-10-16")
+    assert game_mod.active_params("momentum", root)["top_n"] == 4
+    assert game_mod.active_params("momentum", root)["lookback"] == 126       # retired rule no longer applies
+    assert [r["id"] for r in game_mod.load_rules("momentum", root)["active"]] == ["MOM-2"]
+    text = game_mod.render_rulebooks(root)
+    assert "MOM-2" in text and "MAC-1" in text
+
+
+def test_strategies_follow_rule_params(tmp_path):
+    up = [100 + i for i in range(200)]
+    series = {s: [100 + i * (k + 1) * 0.1 for i in range(200)] for k, s in enumerate(game_mod.MOMENTUM_UNIVERSE)}
+    book = type("B", (), {"data": {"positions": {}, "trades": []}})()
+    p = dict(game_mod.DEFAULT_PARAMS["momentum"], top_n=1, lookback=63)
+    targets, why, _ = game_mod.strat_momentum(lambda s: series[s], book, p)
+    assert list(targets) == [game_mod.MOMENTUM_UNIVERSE[-1]] and "63d" in why
+    p = dict(game_mod.DEFAULT_PARAMS["momentum"], min_score=10.0)
+    assert game_mod.strat_momentum(lambda s: series[s], book, p)[0] == {game_mod.SAFE: 1.0}

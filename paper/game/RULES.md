@@ -38,3 +38,19 @@ ISA eligibility notes:
 - 3× leveraged ETPs such as WisdomTree's LQQ3 are eligible.
 - Crypto ETNs moved to the Innovative Finance ISA on 6 April 2026, so they're refused here.
 - Bitcoin exposure therefore has to come through shares.
+
+## Agents' own rules (owner's grant, 13 Oct 2026)
+
+Starting with the first check-in on 14 Oct 2026, once a day, each agent may create its own rules to help it gain
+an advantage:
+- An amendment can add new rules and retire old ones. Each rule records the advantage it's meant to give.
+- One amendment per agent per UK calendar day. The code enforces this.
+- Systematic agents' rules can retune their code parameters, such as lookbacks, number of holdings, entry and
+  exit thresholds, stop-losses, universes and rebalance tolerance. Those take effect on the very next run.
+- Discretionary agents' rules are written commitments. They're followed and cited at every check-in.
+- An agent's rules bind only itself.
+- The owner's house rules above are enforced by the ledger, so no agent rule can override them: ISA-only, no
+  margin or shorting, no loans, zero funds loses.
+
+The current rulebooks are in `paper/game/rules/RULEBOOKS.md`, and every amendment is logged in
+`paper/game/rules/<agent>.json` and the agent's journal.

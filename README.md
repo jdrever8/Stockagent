@@ -187,6 +187,14 @@ Real costs are charged:
 - 0.15% FX on non-GBP trades;
 - no dealing fee.
 
+From 14 Oct 2026, each agent may amend its own rulebook once a day to gain an advantage:
+- systematic agents can retune their parameters;
+- discretionary agents adopt written rules they must cite when trading;
+- house rules stay locked in the ledger.
+
+Use `python main.py game rules` to view the rulebooks and `python main.py game amend <agent> '<json>'` to amend
+one. The check-in procedure is in `paper/game/CHECKIN.md`.
+
 The single-book commands (`python main.py book …`) remain for ad-hoc use.
 
 ## What changed from the original code
