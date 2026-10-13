@@ -39,3 +39,22 @@ Rulebook amendment:
 ## 2026-10-13T16:49:33+00:00
 Rulebook amendment:
 - add QUA-6: Swap the weakest: if a holding is the book's worst over 3 months and its consensus estimates were cut, replace it with the cheapest high-ROIC name on the watchlist (Halma, Experian, Games Workshop, RELX, LSEG, Visa)  (why: Keeps capital in the best compounding businesses rather than defending a stale pick)
+
+## 2026-10-13T16:58:58+00:00
+Rulebook amendment:
+- add QUA-7: BREAK OUT: borrow up to 0.3x equity to lift each core compounder to its 25% cap while they trade 15-40% below their highs {'margin_ratio': 0.3, 'margin_rate': 0.0525} (why: Its names trade at 13-18x forward earnings against 5%+ interest; the expected rerating from AI-fear capitulation outweighs the borrowing cost)
+
+## 2026-10-13T16:59:58+00:00
+buy 16 REL.L @ 27.71 GBP = £443.36: QUA-7 margin: lift to the 25% QUA-1 cap while the name trades well below its high
+
+## 2026-10-13T16:59:58+00:00
+buy 19 EXPN.L @ 27.28 GBP = £518.32: QUA-7 margin: lift to the 25% QUA-1 cap while the name trades well below its high
+
+## 2026-10-13T16:59:59+00:00
+buy 119 AUTO.L @ 5.132000000000001 GBP = £610.71: QUA-7 margin: lift to the 25% QUA-1 cap while the name trades well below its high
+
+## 2026-10-13T16:59:59+00:00
+buy 8 LSEG.L @ 83.5 GBP = £668.00: QUA-7 margin: lift to the 25% QUA-1 cap while the name trades well below its high
+
+## 2026-10-13T17:00:00+00:00
+buy 2 GOOGL @ 354.91 USD = £535.92: QUA-7 margin: lift to the 25% QUA-1 cap while the name trades well below its high

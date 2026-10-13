@@ -37,3 +37,11 @@ Rulebook amendment:
 ## 2026-10-13T16:50:18+00:00
 Signal: idle 100% in CSH2.L
 Trades: none
+
+## 2026-10-13T16:58:58+00:00
+Rulebook amendment:
+- add REV-7: BREAK OUT into statistical arbitrage: trade six correlated pairs; open long-cheap/short-rich legs (20% each) at |z| >= 2 on the 60-day ratio, close at |z| < 0.5 {'isa': False, 'pairs': [['RIO.L', 'AAL.L'], ['GSK.L', 'AZN.L'], ['LLOY.L', 'NWG.L'], ['V', 'MA'], ['HSBA.L', 'BARC.L'], ['ULVR.L', 'DGE.L']], 'pair_z': 2.0} (why: Market-neutral mean reversion earns whether markets rise or fall; Rio Tinto vs Anglo American is already 2.1 standard deviations stretched with 0.83 correlation)
+
+## 2026-10-13T16:59:33+00:00
+Signal: open pair: long RIO.L / short AAL.L, z -2.09; idle 80% in CSH2.L
+Trades: sell 48.0 AAL.L @ 41.2, sell 1.0 CSH2.L @ 1255.7, buy 28.0 RIO.L @ 69.97

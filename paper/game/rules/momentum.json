@@ -101,6 +101,27 @@
     }
    ],
    "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 3"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:58:58+00:00",
+   "changes": [
+    {
+     "id": "MOM-7",
+     "adopted": "2026-10-13",
+     "text": "Lever the leaders: move a third of any rising leader (above its 50-day average) into its 3x ETP (EQQQ->LQQ3, VUSA->3USL)",
+     "params": {
+      "lever_map": {
+       "EQQQ.L": "LQQ3.L",
+       "VUSA.L": "3USL.L"
+      },
+      "lever_share": 0.33
+     },
+     "rationale": "Turns 1x trend exposure into ~1.67x on the strongest, still-rising legs while keeping two thirds unlevered; daily-reset decay only bites in chop, which the 50-day filter avoids",
+     "op": "add"
+    }
+   ],
+   "grant": "owner: crank up creativity to make as much money as possible, 2026-10-13"
   }
  ],
  "active": [
@@ -171,6 +192,19 @@
     "weighting": "inverse_vol"
    },
    "rationale": "Equalises risk across picks so a volatile winner (semis) cannot dominate drawdowns; better risk-adjusted momentum"
+  },
+  {
+   "id": "MOM-7",
+   "adopted": "2026-10-13",
+   "text": "Lever the leaders: move a third of any rising leader (above its 50-day average) into its 3x ETP (EQQQ->LQQ3, VUSA->3USL)",
+   "params": {
+    "lever_map": {
+     "EQQQ.L": "LQQ3.L",
+     "VUSA.L": "3USL.L"
+    },
+    "lever_share": 0.33
+   },
+   "rationale": "Turns 1x trend exposure into ~1.67x on the strongest, still-rising legs while keeping two thirds unlevered; daily-reset decay only bites in chop, which the 50-day filter avoids"
   }
  ]
 }

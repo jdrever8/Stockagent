@@ -42,3 +42,7 @@ Rulebook amendment:
 
 ## 2026-10-13T16:51:13+00:00
 sell 107 RR.L @ 13.456 GBP = £1,439.79: CHA-5 short: RR.L closed 1345.6p below its 20-day low 1367p on 1.86x volume; cover above 20d high or +8% against
+
+## 2026-10-13T16:58:58+00:00
+Rulebook amendment:
+- add CHA-7: Lever index breakouts: when the S&P 500 or Nasdaq-100 closes at a 20-day high on rising volume, take up to 15% in 3USL/LQQ3 with a 6% stop  (why: Index breakouts have the cleanest follow-through; 3x ETPs make a 5% index move worth 15% on the sleeve, and the tight stop caps the decay risk)

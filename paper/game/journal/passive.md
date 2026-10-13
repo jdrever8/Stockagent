@@ -30,3 +30,10 @@ Rulebook amendment:
 ## 2026-10-13T16:50:20+00:00
 Signal: switch everything into FWRG.L
 Trades: sell 67.0 VWRP.L @ 145.82, buy 1376 FWRG.L @ 7.184
+
+## 2026-10-13T16:58:58+00:00
+Creativity round offered; refused by its own commitment (passive bound itself with PAS-3: no further rule changes).
+
+## 2026-10-13T16:59:34+00:00
+Signal: hold, sweeping spare cash into the fund
+Trades: none

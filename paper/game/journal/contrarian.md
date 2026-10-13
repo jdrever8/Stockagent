@@ -53,3 +53,7 @@ Rulebook amendment:
 ## 2026-10-13T16:49:33+00:00
 Rulebook amendment:
 - add CON-6: Every Monday, buy up to 5% of equity in the largest holding of the bottom-ranked agent, if the asset is not broken  (why: The game's worst performer is holding what has just been punished most: the purest contrarian signal available)
+
+## 2026-10-13T16:58:58+00:00
+Rulebook amendment:
+- add CON-7: Capitulation buys: buy names with 14-day RSI below 25, within 5% of a 52-week low and positive free cash flow (subject to CON-5 sentiment)  (why: Forced selling into the low is where contrarian returns are largest; the free-cash-flow test keeps it out of value traps)

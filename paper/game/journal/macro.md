@@ -45,3 +45,10 @@ sell 8 VUKE.L @ 46.155 GBP = £369.24: MAC-5 funding: trim FTSE 100 to make room
 
 ## 2026-10-13T16:51:12+00:00
 buy 16 SGLN.L @ 60.94 GBP = £975.04: MAC-5 war-risk insurance: 10% gold while Brent > $90 (Brent $105.9)
+
+## 2026-10-13T16:58:58+00:00
+Rulebook amendment:
+- add MAC-7: BREAK OUT: short long gilts (IGLT) at 15% of equity as a term-premium trade until the MAC-6 pivot trigger fires {'isa': False} (why: Sticky 3%+ inflation, a hiking Fed and rising global yields (US 10y 5.2%, +29bp in a month) push long-gilt prices down; the money-market sleeve already pays Bank Rate)
+
+## 2026-10-13T16:59:55+00:00
+sell 158 IGLT.L @ 9.4925 GBP = £1,499.82: MAC-7 term-premium short: long gilts vs sticky inflation and rising global yields

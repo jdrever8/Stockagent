@@ -33,3 +33,11 @@ Rulebook amendment:
 ## 2026-10-13T16:50:05+00:00
 Signal: 126d return skipping 5d: SEMI.L +74.0%, EQQQ.L +29.8%, VUSA.L +18.6%, VJPN.L +16.2%, VFEM.L +12.1%, VMID.L +11.7%, IUKP.L +7.5%, IUES.L +6.0%, VERX.L +5.0%, VUKE.L +1.1%, NDIA.L -0.9%, IGLT.L -2.9%, SGLN.L -10.8% -> hold SEMI.L 13%, EQQQ.L 33%, VUSA.L 55% (inverse vol)
 Trades: sell 83.0 VJPN.L @ 39.705, sell 53.0 VFEM.L @ 61.81, buy 82.0 SEMI.L @ 15.158, buy 5.0 EQQQ.L @ 561.64, buy 19.0 VUSA.L @ 111.418
+
+## 2026-10-13T16:58:58+00:00
+Rulebook amendment:
+- add MOM-7: Lever the leaders: move a third of any rising leader (above its 50-day average) into its 3x ETP (EQQQ->LQQ3, VUSA->3USL) {'lever_map': {'EQQQ.L': 'LQQ3.L', 'VUSA.L': '3USL.L'}, 'lever_share': 0.33} (why: Turns 1x trend exposure into ~1.67x on the strongest, still-rising legs while keeping two thirds unlevered; daily-reset decay only bites in chop, which the 50-day filter avoids)
+
+## 2026-10-13T16:59:15+00:00
+Signal: 126d return skipping 5d: SEMI.L +74.0%, EQQQ.L +29.8%, VUSA.L +18.6%, VJPN.L +16.2%, VFEM.L +12.1%, VMID.L +11.7%, IUKP.L +7.5%, IUES.L +6.0%, VERX.L +5.0%, VUKE.L +1.1%, NDIA.L -0.9%, IGLT.L -2.9%, SGLN.L -10.8% -> hold SEMI.L 13%, EQQQ.L 22%, VUSA.L 37%, LQQ3.L 11%, 3USL.L 18% (inverse vol, 33% of EQQQ.L via 3x LQQ3.L, 33% of VUSA.L via 3x 3USL.L)
+Trades: sell 2.0 EQQQ.L @ 561.64, sell 16.0 VUSA.L @ 111.418, buy 3.0 LQQ3.L @ 341.34, buy 12.0 3USL.L @ 192.72

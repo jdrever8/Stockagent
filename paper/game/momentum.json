@@ -4,14 +4,14 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 587.8580000000002,
+ "cash": 721.1384348810875,
  "fee_per_trade": 0.0,
  "isa": true,
  "eliminated": null,
  "positions": {
   "VUSA.L": {
-   "qty": 48.0,
-   "cost_base": 5354.85,
+   "qty": 32.0,
+   "cost_base": 3569.9000000000005,
    "currency": "GBP",
    "instrument": "etf"
   },
@@ -22,10 +22,22 @@
    "instrument": "etf"
   },
   "EQQQ.L": {
-   "qty": 5.0,
-   "cost_base": 2808.2,
+   "qty": 3.0,
+   "cost_base": 1684.9199999999998,
    "currency": "GBP",
    "instrument": "etf"
+  },
+  "LQQ3.L": {
+   "qty": 3.0,
+   "cost_base": 1024.02,
+   "currency": "GBP",
+   "instrument": "etp"
+  },
+  "3USL.L": {
+   "qty": 12.0,
+   "cost_base": 1746.0475651189126,
+   "currency": "USD",
+   "instrument": "etp"
   }
  },
  "trades": [
@@ -196,6 +208,90 @@
    "quote_time": "2026-10-13T15:35:26+00:00",
    "fx_source": "identity",
    "note": "126d return skipping 5d: SEMI.L +74.0%, EQQQ.L +29.8%, VUSA.L +18.6%, VJPN.L +16.2%, VFEM.L +12.1%, VMID.L +11.7%, IUKP.L +7.5%, IUES.L +6.0%, VERX.L +5.0%, VUKE.L +1.1%, NDIA.L -0.9%, IGLT.L -2.9%, SGLN.L -10.8% -> hold SEMI.L 13%, EQQQ.L 33%, VUSA.L 55% (inverse vol)"
+  },
+  {
+   "time": "2026-10-13T16:59:13+00:00",
+   "side": "sell",
+   "symbol": "EQQQ.L",
+   "instrument": "etf",
+   "qty": 2.0,
+   "price": 561.64,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1123.28,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:16+00:00",
+   "fx_source": "identity",
+   "note": "126d return skipping 5d: SEMI.L +74.0%, EQQQ.L +29.8%, VUSA.L +18.6%, VJPN.L +16.2%, VFEM.L +12.1%, VMID.L +11.7%, IUKP.L +7.5%, IUES.L +6.0%, VERX.L +5.0%, VUKE.L +1.1%, NDIA.L -0.9%, IGLT.L -2.9%, SGLN.L -10.8% -> hold SEMI.L 13%, EQQQ.L 22%, VUSA.L 37%, LQQ3.L 11%, 3USL.L 18% (inverse vol, 33% of EQQQ.L via 3x LQQ3.L, 33% of VUSA.L via 3x 3USL.L)"
+  },
+  {
+   "time": "2026-10-13T16:59:13+00:00",
+   "side": "sell",
+   "symbol": "VUSA.L",
+   "instrument": "etf",
+   "qty": 16.0,
+   "price": 111.418,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1782.69,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": -2.26,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:26+00:00",
+   "fx_source": "identity",
+   "note": "126d return skipping 5d: SEMI.L +74.0%, EQQQ.L +29.8%, VUSA.L +18.6%, VJPN.L +16.2%, VFEM.L +12.1%, VMID.L +11.7%, IUKP.L +7.5%, IUES.L +6.0%, VERX.L +5.0%, VUKE.L +1.1%, NDIA.L -0.9%, IGLT.L -2.9%, SGLN.L -10.8% -> hold SEMI.L 13%, EQQQ.L 22%, VUSA.L 37%, LQQ3.L 11%, 3USL.L 18% (inverse vol, 33% of EQQQ.L via 3x LQQ3.L, 33% of VUSA.L via 3x 3USL.L)"
+  },
+  {
+   "time": "2026-10-13T16:59:14+00:00",
+   "side": "buy",
+   "symbol": "LQQ3.L",
+   "instrument": "etp",
+   "qty": 3.0,
+   "price": 341.34,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 1024.02,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:21+00:00",
+   "fx_source": "identity",
+   "note": "126d return skipping 5d: SEMI.L +74.0%, EQQQ.L +29.8%, VUSA.L +18.6%, VJPN.L +16.2%, VFEM.L +12.1%, VMID.L +11.7%, IUKP.L +7.5%, IUES.L +6.0%, VERX.L +5.0%, VUKE.L +1.1%, NDIA.L -0.9%, IGLT.L -2.9%, SGLN.L -10.8% -> hold SEMI.L 13%, EQQQ.L 22%, VUSA.L 37%, LQQ3.L 11%, 3USL.L 18% (inverse vol, 33% of EQQQ.L via 3x LQQ3.L, 33% of VUSA.L via 3x 3USL.L)"
+  },
+  {
+   "time": "2026-10-13T16:59:15+00:00",
+   "side": "buy",
+   "symbol": "3USL.L",
+   "instrument": "etp",
+   "qty": 12.0,
+   "price": 192.72,
+   "currency": "USD",
+   "fx_to_base": 0.755002,
+   "value_base": 1746.05,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 2.62
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:24+00:00",
+   "fx_source": "yahoo",
+   "note": "126d return skipping 5d: SEMI.L +74.0%, EQQQ.L +29.8%, VUSA.L +18.6%, VJPN.L +16.2%, VFEM.L +12.1%, VMID.L +11.7%, IUKP.L +7.5%, IUES.L +6.0%, VERX.L +5.0%, VUKE.L +1.1%, NDIA.L -0.9%, IGLT.L -2.9%, SGLN.L -10.8% -> hold SEMI.L 13%, EQQQ.L 22%, VUSA.L 37%, LQQ3.L 11%, 3USL.L 18% (inverse vol, 33% of EQQQ.L via 3x LQQ3.L, 33% of VUSA.L via 3x 3USL.L)"
   }
  ],
  "marks": [
@@ -243,8 +339,13 @@
    "time": "2026-10-13T16:51:23+00:00",
    "equity": 9987.08,
    "cash": 587.86
+  },
+  {
+   "time": "2026-10-13T17:00:46+00:00",
+   "equity": 9984.59,
+   "cash": 721.14
   }
  ],
  "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice",
- "interest_accrued_to": "2026-10-13T16:51:21+00:00"
+ "interest_accrued_to": "2026-10-13T17:00:43+00:00"
 }

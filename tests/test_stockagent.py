@@ -604,3 +604,29 @@ def test_self_lock_rule_blocks_further_amendments(tmp_path):
     with pytest.raises(PermissionError, match="bound itself"):
         game_mod.amend_rules("passive", [{"op": "add", "text": "t", "rationale": "r"}], root, today="2026-10-21",
                              grant="extra turn")
+
+
+def test_pairs_lever_and_short_rebalance(tmp_path, monkeypatch):
+    # pair: A collapses relative to B -> long A / short B
+    a = [100.0] * 80 + [90.0]
+    b = [100.0 + (i % 2) * 0.5 for i in range(81)]
+    book = type("B", (), {"data": {"positions": {}, "trades": []}})()
+    p = dict(game_mod.DEFAULT_PARAMS["reversion"], universe=[], pairs=[["A", "B"]], idle_asset="CSH2.L")
+    w, why, inst = game_mod.strat_reversion(lambda s: {"A": a, "B": b}[s], book, p)
+    assert w["A"] == 0.2 and w["B"] == -0.2 and w["CSH2.L"] == pytest.approx(0.8) and "open pair" in why
+    # momentum levers a rising leader through its 3x ETP
+    up = [100 + i for i in range(200)]
+    series = {s: [100.0] * 200 for s in game_mod.MOMENTUM_UNIVERSE}
+    series["VUSA.L"] = up
+    pm = dict(game_mod.DEFAULT_PARAMS["momentum"], top_n=1, min_score=0.01, lever_map={"VUSA.L": "3USL.L"},
+              lever_share=0.25)
+    w, why, inst = game_mod.strat_momentum(lambda s: series[s], book, pm)
+    assert w == {"VUSA.L": 0.75, "3USL.L": 0.25} and inst["3USL.L"] == "etp"
+    # signed rebalance opens a short outside the ISA
+    prices = {"GBPUSD": 1.25, "A.L": 10.0, "B.L": 10.0}
+    monkeypatch.setattr(book_mod, "fetch_quotes", fake_quotes(prices))
+    bk = book_mod.Book.init(str(tmp_path / "r.json"), 10_000, isa=False)
+    done = game_mod.rebalance(bk, {"A.L": 0.2, "B.L": -0.2}, {"A.L": 10.0, "B.L": 10.0}, {"A.L": 1, "B.L": 1},
+                              "share", "pair")
+    assert [(t["side"], t["symbol"]) for t in done] == [("sell", "B.L"), ("buy", "A.L")]
+    assert bk.data["positions"]["B.L"]["qty"] == -199 and bk.data["positions"]["A.L"]["qty"] == 199

@@ -57,3 +57,10 @@ sell 58 OKLO @ 31.895 USD = £1,396.69: SPE-4 short book: OKLO 6m -45%, 45% belo
 
 ## 2026-10-13T16:51:08+00:00
 buy 310 IB1T.L @ 6.286 GBP = £1,948.66: SPE-6 crypto sleeve: iShares Bitcoin ETP, +34% 3m (allowed after SPE-1 breakout)
+
+## 2026-10-13T16:58:58+00:00
+Rulebook amendment:
+- add SPE-7: AI-chip supercycle sleeve: up to 10% in the 3x NVIDIA ETP (3NVD.L) while NVDA is above its 50-day average  (why: NVIDIA is the purest AI-capex beneficiary; 3x exposure with a trend gate maximises upside per pound of margin)
+
+## 2026-10-13T17:00:05+00:00
+buy 20 3NVD.L @ 48.61 GBP = £972.20: SPE-7 AI-chip sleeve: NVDA 1.8% above its 50-day average

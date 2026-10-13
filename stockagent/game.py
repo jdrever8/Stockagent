@@ -121,10 +121,12 @@ History = Callable[[str], List[float]]
 # Tunable parameters. Agents may change these through their own daily rulebook amendments.
 DEFAULT_PARAMS: Dict[str, Dict[str, object]] = {
     "momentum": {"universe": MOMENTUM_UNIVERSE, "safe": SAFE, "top_n": 3, "lookback": 126, "skip": 5,
-                 "min_score": 0.0, "tolerance": 0.10, "trend_filter": None, "weighting": "equal"},
+                 "min_score": 0.0, "tolerance": 0.10, "trend_filter": None, "weighting": "equal",
+                 "lever_map": {}, "lever_share": 0.0},
     "reversion": {"universe": REVERSION_UNIVERSE, "rsi_len": 2, "rsi_entry": 10.0, "trend_len": 200,
                   "exit_len": 5, "max_positions": 5, "stop_loss": None, "tolerance": 0.10, "idle_asset": None,
-                  "time_stop_days": None},
+                  "time_stop_days": None, "pairs": [], "pair_z": 2.0, "pair_exit_z": 0.5, "pair_weight": 0.2,
+                  "pair_window": 60},
     "passive": {"holding": GLOBAL_TRACKER, "tolerance": 0.10, "top_up": False},
 }
 
@@ -147,6 +149,7 @@ def strat_momentum(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float]
             return {p["safe"]: 1.0}, why + f" -> {gate} below its 200d average: crash filter, hold the safe asset", "etf"
     if not picks:
         return {p["safe"]: 1.0}, why + " -> nothing qualifies, hold the safe asset", "etf"
+    weights, how = {s: 1 / len(picks) for s in picks}, "equal"
     if p.get("weighting") == "inverse_vol":
         vols = {}
         for sym in picks:
@@ -155,16 +158,51 @@ def strat_momentum(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float]
             vols[sym] = max(statistics.pstdev(rets), 1e-4) if len(rets) > 1 else 1.0
         inv = {sym: 1 / v for sym, v in vols.items()}
         total = sum(inv.values())
-        weights = {sym: inv[sym] / total for sym in picks}
-        return weights, why + " -> hold " + ", ".join(f"{s} {w:.0%}" for s, w in weights.items()) + " (inverse vol)", "etf"
-    return {s: 1 / len(picks) for s in picks}, why + f" -> hold {picks}", "etf"
+        weights, how = {sym: inv[sym] / total for sym in picks}, "inverse vol"
+    instruments = {sym: "etf" for sym in weights}
+    share = float(p.get("lever_share") or 0)
+    for sym in list(weights):
+        lever = (p.get("lever_map") or {}).get(sym)
+        closes = hist(sym)
+        m50 = sma(closes, 50)
+        if lever and share > 0 and m50 is not None and closes[-1] > m50:   # lever only a rising leader
+            moved = weights[sym] * share
+            weights[sym] -= moved
+            weights[lever] = weights.get(lever, 0) + moved
+            instruments[lever] = "etp"
+            how += f", {share:.0%} of {sym} via 3x {lever}"
+    return weights, why + " -> hold " + ", ".join(f"{s} {w:.0%}" for s, w in weights.items()) + f" ({how})", instruments
 
 
 def strat_reversion(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float], str, str]:
     weight = 1.0 / int(p["max_positions"])
     keep, notes = {}, []
+    pair_legs = {leg for pair in (p.get("pairs") or []) for leg in pair}
+    pair_targets = {}
+    for a, b in (p.get("pairs") or []):
+        ca, cb = hist(a), hist(b)
+        n = min(len(ca), len(cb))
+        win = int(p["pair_window"])
+        if n < win:
+            continue
+        ratio = [x / y for x, y in zip(ca[-n:], cb[-n:])]
+        mu, sd = statistics.mean(ratio[-win:]), statistics.pstdev(ratio[-win:])
+        z = (ratio[-1] - mu) / sd if sd else 0.0
+        pos = book.data["positions"]
+        pw = float(p["pair_weight"])
+        if a in pos or b in pos:
+            if abs(z) < float(p["pair_exit_z"]):
+                notes.append(f"close pair {a}/{b}: z {z:+.2f} reverted")
+            else:
+                pair_targets[a] = pw if pos.get(a, {}).get("qty", 0) > 0 else -pw
+                pair_targets[b] = -pair_targets[a]
+                notes.append(f"hold pair {a}/{b}: z {z:+.2f}")
+        elif abs(z) >= float(p["pair_z"]):
+            long_leg, short_leg = (a, b) if z < 0 else (b, a)
+            pair_targets[long_leg], pair_targets[short_leg] = pw, -pw
+            notes.append(f"open pair: long {long_leg} / short {short_leg}, z {z:+.2f}")
     for sym, pos in book.data["positions"].items():
-        if sym == p.get("idle_asset"):
+        if sym == p.get("idle_asset") or sym in pair_legs:
             continue
         closes = hist(sym)
         m_exit = sma(closes, int(p["exit_len"]))
@@ -180,7 +218,7 @@ def strat_reversion(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float
             keep[sym] = weight
     candidates = []
     for sym in p["universe"]:
-        if sym in keep:
+        if sym in keep or sym in pair_legs:
             continue
         closes = hist(sym)
         m_trend, r = sma(closes, int(p["trend_len"])), rsi(closes, int(p["rsi_len"]))
@@ -189,11 +227,12 @@ def strat_reversion(hist: History, book: Book, p: dict) -> Tuple[Dict[str, float
     for r, sym in sorted(candidates)[: max(0, int(p["max_positions"]) - len(keep))]:
         keep[sym] = weight
         notes.append(f"enter {sym}: RSI{p['rsi_len']} {r:.1f}, above {p['trend_len']}d")
+    keep.update(pair_targets)
     instruments = {s: "share" for s in keep}
     idle = p.get("idle_asset")
-    if idle:   # park whatever the signals don't use; sold first when room is needed
+    if idle:   # park whatever the long signals don't use; sold first when room is needed
         keep.pop(idle, None)
-        keep[idle] = max(0.0, 1.0 - sum(keep.values()))
+        keep[idle] = max(0.0, 1.0 - sum(w for w in keep.values() if w > 0))
         instruments[idle] = "etf"
         notes.append(f"idle {keep[idle]:.0%} in {idle}")
     return keep, "; ".join(notes) or "no signals", instruments
@@ -235,7 +274,9 @@ STRATEGIES = {"momentum": strat_momentum, "reversion": strat_reversion,
 # Rebalancing (whole shares, sells before buys, 10% tolerance band to avoid churn)
 # ---------------------------------------------------------------------------
 def rebalance(book: Book, targets: Dict[str, Optional[float]], prices: Dict[str, float], fx: Dict[str, float],
-              instrument: str, reason: str, trade: Optional[Callable] = None, tolerance: float = 0.10) -> List[dict]:
+              instrument, reason: str, trade: Optional[Callable] = None, tolerance: float = 0.10) -> List[dict]:
+    """Move the book to signed target weights (negative = short). Whole shares, sells before buys,
+    and a tolerance band so small drifts don't churn. ``None`` means leave that holding alone."""
     trade = trade or book.trade
     d = book.data
 
@@ -245,28 +286,27 @@ def rebalance(book: Book, targets: Dict[str, Optional[float]], prices: Dict[str,
     pos = d["positions"]
     equity = d["cash"] + sum(p["qty"] * prices[s] * fx[s] for s, p in pos.items())
     budget = equity * 0.995  # leave room for stamp duty / FX costs
-    done = []
-    # sells: exits and trims
-    for sym, p in list(pos.items()):
+    plan = []
+    for sym in set(pos) | {s for s, w in targets.items() if w is not None}:
         w = targets.get(sym, 0.0)
         if w is None:
             continue
         unit = prices[sym] * fx[sym]
-        target_qty = math.floor(budget * w / unit)
-        if p["qty"] - target_qty > 0 and (w == 0 or (p["qty"] - target_qty) * unit > tolerance * budget * w):
-            done.append(trade("sell", sym, p["qty"] - target_qty, note=reason,
-                              instrument=p.get("instrument", inst_of(sym))))
-    # buys
-    for sym, w in targets.items():
-        if not w:
-            continue
-        unit = prices[sym] * fx[sym]
+        target = math.floor(budget * abs(w) / unit) * (1 if w >= 0 else -1)
         have = pos.get(sym, {}).get("qty", 0.0)
-        target_qty = math.floor(budget * w / unit)
-        gap = target_qty - have
-        if gap > 0 and (have == 0 or gap * unit > tolerance * budget * w):
-            affordable = math.floor((d["cash"] * 0.99) / unit)
-            qty = min(gap, affordable)
+        delta = target - have
+        if delta == 0:
+            continue
+        if w == 0 or have == 0 or abs(delta) * unit > tolerance * budget * abs(w):
+            plan.append((sym, delta, unit))
+    done = []
+    for sym, delta, unit in sorted(plan, key=lambda x: x[1] > 0):      # sells (and new shorts) first
+        if delta < 0:
+            done.append(trade("sell", sym, -delta, note=reason,
+                              instrument=pos.get(sym, {}).get("instrument", inst_of(sym))))
+        else:
+            power = book.buying_power() if hasattr(book, "buying_power") else d["cash"]
+            qty = min(delta, math.floor(power * 0.99 / unit))
             if qty > 0:
                 done.append(trade("buy", sym, qty, note=reason, instrument=inst_of(sym)))
     return done

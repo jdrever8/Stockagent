@@ -4,38 +4,38 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 413.31005285013134,
+ "cash": -2374.9936023865434,
  "fee_per_trade": 0.0,
  "isa": true,
  "eliminated": null,
  "positions": {
   "REL.L": {
-   "qty": 74.0,
-   "cost_base": 2041.66,
+   "qty": 90.0,
+   "cost_base": 2485.02,
    "currency": "GBP",
    "instrument": "share"
   },
   "EXPN.L": {
-   "qty": 72.0,
-   "cost_base": 1950.48,
+   "qty": 91.0,
+   "cost_base": 2468.8,
    "currency": "GBP",
    "instrument": "share"
   },
   "AUTO.L": {
-   "qty": 369.0,
-   "cost_base": 1870.8300000000002,
+   "qty": 488.0,
+   "cost_base": 2481.5380000000005,
    "currency": "GBP",
    "instrument": "share"
   },
   "LSEG.L": {
-   "qty": 22.0,
-   "cost_base": 1813.6799999999998,
+   "qty": 30.0,
+   "cost_base": 2481.68,
    "currency": "GBP",
    "instrument": "share"
   },
   "GOOGL": {
-   "qty": 7.0,
-   "cost_base": 1868.859947149868,
+   "qty": 9.0,
+   "cost_base": 2404.775386938468,
    "currency": "USD",
    "instrument": "share"
   }
@@ -145,6 +145,111 @@
    "quote_time": "2026-10-13T14:37:03+00:00",
    "fx_source": "yahoo",
    "note": "quality opening position (20% target)"
+  },
+  {
+   "time": "2026-10-13T16:59:58+00:00",
+   "side": "buy",
+   "symbol": "REL.L",
+   "instrument": "share",
+   "qty": 16,
+   "price": 27.71,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 443.36,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 2.22,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:19+00:00",
+   "fx_source": "identity",
+   "note": "QUA-7 margin: lift to the 25% QUA-1 cap while the name trades well below its high"
+  },
+  {
+   "time": "2026-10-13T16:59:58+00:00",
+   "side": "buy",
+   "symbol": "EXPN.L",
+   "instrument": "share",
+   "qty": 19,
+   "price": 27.28,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 518.32,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 2.59,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:49:39+00:00",
+   "fx_source": "identity",
+   "note": "QUA-7 margin: lift to the 25% QUA-1 cap while the name trades well below its high"
+  },
+  {
+   "time": "2026-10-13T16:59:59+00:00",
+   "side": "buy",
+   "symbol": "AUTO.L",
+   "instrument": "share",
+   "qty": 119,
+   "price": 5.132000000000001,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 610.71,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 3.05,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:35:20+00:00",
+   "fx_source": "identity",
+   "note": "QUA-7 margin: lift to the 25% QUA-1 cap while the name trades well below its high"
+  },
+  {
+   "time": "2026-10-13T16:59:59+00:00",
+   "side": "buy",
+   "symbol": "LSEG.L",
+   "instrument": "share",
+   "qty": 8,
+   "price": 83.5,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 668.0,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 3.34,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T15:49:40+00:00",
+   "fx_source": "identity",
+   "note": "QUA-7 margin: lift to the 25% QUA-1 cap while the name trades well below its high"
+  },
+  {
+   "time": "2026-10-13T17:00:00+00:00",
+   "side": "buy",
+   "symbol": "GOOGL",
+   "instrument": "share",
+   "qty": 2,
+   "price": 354.91,
+   "currency": "USD",
+   "fx_to_base": 0.755002,
+   "value_base": 535.92,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.8
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-13T16:59:56+00:00",
+   "fx_source": "yahoo",
+   "note": "QUA-7 margin: lift to the 25% QUA-1 cap while the name trades well below its high"
   }
  ],
  "marks": [
@@ -192,8 +297,26 @@
    "time": "2026-10-13T16:51:32+00:00",
    "equity": 10036.15,
    "cash": 413.31
+  },
+  {
+   "time": "2026-10-13T17:00:55+00:00",
+   "equity": 10022.88,
+   "cash": -2374.99
   }
  ],
- "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice",
- "interest_accrued_to": "2026-10-13T16:51:29+00:00"
+ "rules": "broke out of house rules: margin up to 0.3x equity; margin interest 5.25%",
+ "interest_accrued_to": "2026-10-13T17:00:53+00:00",
+ "margin_ratio": 0.3,
+ "margin_rate": 0.0525,
+ "breakouts": [
+  {
+   "time": "2026-10-13T16:58:58+00:00",
+   "rule": "QUA-7",
+   "changes": [
+    "margin up to 0.3x equity",
+    "margin interest 5.25%"
+   ]
+  }
+ ],
+ "interest_paid": 0.0002
 }

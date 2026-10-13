@@ -75,6 +75,26 @@
     }
    ],
    "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 3"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:58:58+00:00",
+   "changes": [
+    {
+     "id": "MAC-7",
+     "adopted": "2026-10-13",
+     "text": "BREAK OUT: short long gilts (IGLT) at 15% of equity as a term-premium trade until the MAC-6 pivot trigger fires",
+     "params": {
+      "isa": false
+     },
+     "rationale": "Sticky 3%+ inflation, a hiking Fed and rising global yields (US 10y 5.2%, +29bp in a month) push long-gilt prices down; the money-market sleeve already pays Bank Rate",
+     "breakout": [
+      "left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)"
+     ],
+     "op": "add"
+    }
+   ],
+   "grant": "owner: crank up creativity to make as much money as possible, 2026-10-13"
   }
  ],
  "active": [
@@ -119,6 +139,18 @@
    "text": "FOMC playbook: if the Fed holds on 28 Oct and signals no further hikes, move 20% from money market into long gilts the same day",
    "params": {},
    "rationale": "Pre-commits the pivot trade; the biggest macro gains come from acting first on a regime change"
+  },
+  {
+   "id": "MAC-7",
+   "adopted": "2026-10-13",
+   "text": "BREAK OUT: short long gilts (IGLT) at 15% of equity as a term-premium trade until the MAC-6 pivot trigger fires",
+   "params": {
+    "isa": false
+   },
+   "rationale": "Sticky 3%+ inflation, a hiking Fed and rising global yields (US 10y 5.2%, +29bp in a month) push long-gilt prices down; the money-market sleeve already pays Bank Rate",
+   "breakout": [
+    "left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)"
+   ]
   }
  ]
 }

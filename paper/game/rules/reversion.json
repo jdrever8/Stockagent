@@ -110,6 +110,53 @@
     }
    ],
    "grant": "owner: three rule turns per agent, round-robin, 2026-10-13: round 3"
+  },
+  {
+   "date": "2026-10-13",
+   "time": "2026-10-13T16:58:58+00:00",
+   "changes": [
+    {
+     "id": "REV-7",
+     "adopted": "2026-10-13",
+     "text": "BREAK OUT into statistical arbitrage: trade six correlated pairs; open long-cheap/short-rich legs (20% each) at |z| >= 2 on the 60-day ratio, close at |z| < 0.5",
+     "params": {
+      "isa": false,
+      "pairs": [
+       [
+        "RIO.L",
+        "AAL.L"
+       ],
+       [
+        "GSK.L",
+        "AZN.L"
+       ],
+       [
+        "LLOY.L",
+        "NWG.L"
+       ],
+       [
+        "V",
+        "MA"
+       ],
+       [
+        "HSBA.L",
+        "BARC.L"
+       ],
+       [
+        "ULVR.L",
+        "DGE.L"
+       ]
+      ],
+      "pair_z": 2.0
+     },
+     "rationale": "Market-neutral mean reversion earns whether markets rise or fall; Rio Tinto vs Anglo American is already 2.1 standard deviations stretched with 0.83 correlation",
+     "breakout": [
+      "left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)"
+     ],
+     "op": "add"
+    }
+   ],
+   "grant": "owner: crank up creativity to make as much money as possible, 2026-10-13"
   }
  ],
  "active": [
@@ -189,6 +236,45 @@
     "max_positions": 4
    },
    "rationale": "Signals are rare; when one fires, a larger position makes it count"
+  },
+  {
+   "id": "REV-7",
+   "adopted": "2026-10-13",
+   "text": "BREAK OUT into statistical arbitrage: trade six correlated pairs; open long-cheap/short-rich legs (20% each) at |z| >= 2 on the 60-day ratio, close at |z| < 0.5",
+   "params": {
+    "isa": false,
+    "pairs": [
+     [
+      "RIO.L",
+      "AAL.L"
+     ],
+     [
+      "GSK.L",
+      "AZN.L"
+     ],
+     [
+      "LLOY.L",
+      "NWG.L"
+     ],
+     [
+      "V",
+      "MA"
+     ],
+     [
+      "HSBA.L",
+      "BARC.L"
+     ],
+     [
+      "ULVR.L",
+      "DGE.L"
+     ]
+    ],
+    "pair_z": 2.0
+   },
+   "rationale": "Market-neutral mean reversion earns whether markets rise or fall; Rio Tinto vs Anglo American is already 2.1 standard deviations stretched with 0.83 correlation",
+   "breakout": [
+    "left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)"
+   ]
   }
  ]
 }
