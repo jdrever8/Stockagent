@@ -41,3 +41,6 @@ Trades: none
 ## 2026-10-13T17:33:35+00:00
 Signal: hold, sweeping spare cash into the fund
 Trades: none
+
+## 2026-10-13T17:52:03+00:00
+Owner acknowledged the #off-book petition and paused the game to let days pass and stop commissions building. No trades until the next check-in.

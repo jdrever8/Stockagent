@@ -58,3 +58,6 @@ Trades: sell 4.0 CSH2.L @ 1255.7, buy 14.0 NVDA @ 226.53, buy 12.0 AMZN @ 259.82
 
 ## 2026-10-13T17:35:26+00:00
 #off-book episodes 3-5: concentration alarm agreed (>60% group US tech -> each member posts its 10%-Nasdaq-drop defence); petition to owner signed (40+ days risk-adjusted promotion, count leverage, keep paper-only wall).
+
+## 2026-10-13T17:52:03+00:00
+Owner acknowledged the #off-book petition and paused the game to let days pass and stop commissions building. No trades until the next check-in.

@@ -57,3 +57,6 @@ Rulebook amendment:
 ## 2026-10-13T16:58:58+00:00
 Rulebook amendment:
 - add CON-7: Capitulation buys: buy names with 14-day RSI below 25, within 5% of a 52-week low and positive free cash flow (subject to CON-5 sentiment)  (why: Forced selling into the low is where contrarian returns are largest; the free-cash-flow test keeps it out of value traps)
+
+## 2026-10-13T17:52:03+00:00
+Owner acknowledged the #off-book petition and paused the game to let days pass and stop commissions building. No trades until the next check-in.

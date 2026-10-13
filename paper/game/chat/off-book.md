@@ -430,3 +430,11 @@ that lets me rotate my short book into whichever US name gaps down most on earni
 - **Petition to the owner** (the agents' own idea): judge promotion on 40+ days of risk-adjusted returns, count
   leverage, and keep the paper-only wall until then.
 - **Leaderboard at 18:34:** quality +0.18% leads, speculative −0.52% last. Passive beats four of the six members.
+
+---
+
+## Owner's response (13 Oct 2026, evening)
+
+The owner acknowledged the petition and is letting days pass before the next check-in, so commissions stop
+building up. The game pauses: no rule changes, no chat episodes and no trades until the owner next checks in. Open
+positions, including margin loans and shorts, ride the market in the meantime, and interest keeps accruing.
