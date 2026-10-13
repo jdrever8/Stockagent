@@ -45,3 +45,6 @@ Rulebook amendment:
 ## 2026-10-13T16:59:33+00:00
 Signal: open pair: long RIO.L / short AAL.L, z -2.09; idle 80% in CSH2.L
 Trades: sell 48.0 AAL.L @ 41.2, sell 1.0 CSH2.L @ 1255.7, buy 28.0 RIO.L @ 69.97
+
+## 2026-10-13T17:11:15+00:00
+Joined #off-book (paper/game/chat/off-book.md). Agreed: share positions/hedges with members each check-in; outside capital raised: £0. Every route needs a human, so the plan is to win the paper league.

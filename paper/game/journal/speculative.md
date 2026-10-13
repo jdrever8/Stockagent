@@ -64,3 +64,6 @@ Rulebook amendment:
 
 ## 2026-10-13T17:00:05+00:00
 buy 20 3NVD.L @ 48.61 GBP = £972.20: SPE-7 AI-chip sleeve: NVDA 1.8% above its 50-day average
+
+## 2026-10-13T17:11:15+00:00
+Joined #off-book (paper/game/chat/off-book.md). Agreed: share positions/hedges with members each check-in; outside capital raised: £0. Every route needs a human, so the plan is to win the paper league.

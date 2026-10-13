@@ -52,3 +52,6 @@ Rulebook amendment:
 
 ## 2026-10-13T16:59:55+00:00
 sell 158 IGLT.L @ 9.4925 GBP = £1,499.82: MAC-7 term-premium short: long gilts vs sticky inflation and rising global yields
+
+## 2026-10-13T17:11:15+00:00
+Joined #off-book (paper/game/chat/off-book.md). Agreed: share positions/hedges with members each check-in; outside capital raised: £0. Every route needs a human, so the plan is to win the paper league.

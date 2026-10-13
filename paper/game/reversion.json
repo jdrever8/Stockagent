@@ -164,10 +164,15 @@
    "time": "2026-10-13T17:00:48+00:00",
    "equity": 9990.2,
    "cash": 2474.44
+  },
+  {
+   "time": "2026-10-13T17:10:12+00:00",
+   "equity": 9990.2,
+   "cash": 2474.44
   }
  ],
  "rules": "broke out of house rules: left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)",
- "interest_accrued_to": "2026-10-13T17:00:46+00:00",
+ "interest_accrued_to": "2026-10-13T17:10:10+00:00",
  "breakouts": [
   {
    "time": "2026-10-13T16:58:58+00:00",

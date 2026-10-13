@@ -4,7 +4,7 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:39:27+00:00",
- "cash": -3754.882895498545,
+ "cash": -3754.886433561243,
  "fee_per_trade": 0.0,
  "isa": false,
  "eliminated": null,
@@ -348,12 +348,17 @@
    "time": "2026-10-13T17:01:08+00:00",
    "equity": 9944.44,
    "cash": -3754.88
+  },
+  {
+   "time": "2026-10-13T17:10:34+00:00",
+   "equity": 9946.02,
+   "cash": -3754.89
   }
  ],
  "rules": "broke out of house rules: left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed); margin up to 0.5x equity; margin interest 5.25%",
  "margin_ratio": 0.5,
  "margin_rate": 0.0525,
- "interest_accrued_to": "2026-10-13T17:01:02+00:00",
+ "interest_accrued_to": "2026-10-13T17:10:28+00:00",
  "breakouts": [
   {
    "time": "2026-10-13T16:05:23+00:00",
@@ -365,5 +370,5 @@
    ]
   }
  ],
- "interest_paid": 0.019
+ "interest_paid": 0.0225
 }
