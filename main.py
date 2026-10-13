@@ -4,7 +4,7 @@
   league     stage 1: competitive league across seeds; writes league.md / league.json
   paper      stage 2: forward paper trading of candidates on real or replayed daily bars
   promote    pick a champion from the paper league (writes champion.json for human sign-off)
-  live       stage 3: one daily step for the approved champion through Alpaca
+  live       stage 3: one daily step for the approved champion through IBKR (or Alpaca)
 """
 from __future__ import annotations
 
@@ -43,11 +43,15 @@ def add_sim_args(p):
     p.add_argument("--cooperative", action="store_true", help="do not tell agents they are competing")
 
 
-def make_feed(a, symbols=None):
+def make_feed(a, ib=None, live=False):
     from stockagent.live.feeds import AlpacaFeed, CSVFeed
     if a.csv:
         return CSVFeed(a.csv, anonymize=a.anonymize)
-    return AlpacaFeed(symbols or a.symbols.split(","))
+    symbols = a.symbols.split(",")
+    if a.feed == "ibkr":
+        from stockagent.live.ibkr import IBKRFeed
+        return IBKRFeed(symbols, ib=ib, live=live)
+    return AlpacaFeed(symbols)
 
 
 def main(argv=None):
@@ -67,7 +71,8 @@ def main(argv=None):
         p.add_argument("--state", default="res/paper_league.json")
         p.add_argument("--csv", help="replay bars from CSV (date,symbol,open,high,low,close,volume)")
         p.add_argument("--anonymize", action="store_true", help="rename/rebase tickers for historical replay")
-        p.add_argument("--symbols", default="SPY,QQQ,IWM,TLT,GLD", help="Alpaca symbols for forward paper trading")
+        p.add_argument("--symbols", default="SPY,QQQ,IWM,TLT,GLD", help="symbols for forward paper trading")
+        p.add_argument("--feed", choices=["ibkr", "alpaca"], default="ibkr", help="daily bar source (ignored with --csv)")
         if name == "paper":
             p.add_argument("--candidates", help="comma list of model[@Personality]; required for a new league")
             p.add_argument("--capital", type=float, default=100_000)
@@ -82,7 +87,10 @@ def main(argv=None):
     p.add_argument("--state", default="res/live_state.json")
     p.add_argument("--symbols", default="SPY,QQQ,IWM,TLT,GLD")
     p.add_argument("--budget", type=float, required=True)
-    p.add_argument("--real-money", action="store_true", help="use Alpaca live endpoint (needs sign-off)")
+    p.add_argument("--broker", choices=["ibkr", "alpaca"], default="ibkr")
+    p.add_argument("--feed", choices=["ibkr", "alpaca"], default=None, help="defaults to the broker")
+    p.add_argument("--real-money", action="store_true",
+                   help="live account (IBKR port 4001 / Alpaca live endpoint); needs sign-off")
     p.add_argument("--no-confirm", action="store_true", help="skip per-order confirmation")
     p.add_argument("--csv", default=None)
     p.add_argument("--anonymize", action="store_true")
@@ -134,7 +142,6 @@ def main(argv=None):
             print("\nno candidate meets the promotion rules yet")
 
     elif a.cmd == "live":
-        from stockagent.live.brokers import AlpacaBroker
         from stockagent.live.runner import live_step
 
         def confirm(order):
@@ -143,8 +150,19 @@ def main(argv=None):
             reply = input(f"submit {order['action_type']} {order['amount']} {order['stock']} @ {order['price']}? [y/N] ")
             return reply.strip().lower() == "y"
 
-        broker = AlpacaBroker(live=a.real_money)
-        placed = live_step(a.champion, a.state, make_feed(a), broker, a.budget, confirm)
+        a.feed = a.feed or a.broker
+        if a.broker == "ibkr":
+            from stockagent.live.ibkr import IBKRBroker
+            broker = IBKRBroker(live=a.real_money)
+        else:
+            from stockagent.live.brokers import AlpacaBroker
+            broker = AlpacaBroker(live=a.real_money)
+        try:
+            feed = make_feed(a, ib=getattr(broker, "ib", None), live=a.real_money)
+            placed = live_step(a.champion, a.state, feed, broker, a.budget, confirm)
+        finally:
+            if hasattr(broker, "close"):
+                broker.close()
         print(json.dumps(placed, indent=2, default=str))
     return 0
 

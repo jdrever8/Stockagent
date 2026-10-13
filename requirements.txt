@@ -1,2 +1,4 @@
 requests>=2.31
 pytest>=8
+# optional, for --broker/--feed ibkr
+ib_async>=2.0

@@ -56,10 +56,30 @@ How the competition works:
 Paper ablations (section 5.5): `--no-bbs --no-reports --no-loans --no-events`. Two more switches:
 `--stocks A,B,C,D` adds the repo's two extra companies, and `--cooperative` removes the competitive framing.
 
+## Broker: Interactive Brokers (default) or Alpaca
+
+IBKR is supported through the TWS / IB Gateway socket API (`pip install ib_async`).
+
+1. **Paper account.** Every funded IBKR account gets one automatically. If you don't have it, open Client
+   Portal → user menu → Settings → *Paper Trading Account*. That page shows its own username and an account ID
+   starting with **DU**. The paper login shares the live account's market data subscriptions.
+2. **Gateway.** Install IB Gateway (or use TWS), log in with the *paper* username in Paper mode, then:
+   - enable socket clients under Configure → Settings → API;
+   - untick "Read-Only API".
+
+   Ports are 4002 for paper and 4001 for live on Gateway (7497/7496 on TWS). Override them with `IBKR_PORT`;
+   `IBKR_HOST`, `IBKR_CLIENT_ID`, `IBKR_ACCOUNT` and `IBKR_CURRENCY` are also available.
+3. **Safety checks** in the adapter:
+   - paper mode refuses any account that doesn't start with `D`, and `--real-money` refuses one that does;
+   - with several accounts on one login, you must name the dedicated one in `IBKR_ACCOUNT`;
+   - `cancel_all` only cancels orders tagged `sa-…`, never your manual orders.
+4. **Market data.** Daily bars come from IBKR historical data and need US equity subscriptions. Alternatives
+   are `--feed alpaca` (free IEX data) or `--csv`.
+
 ## Stage 2: paper trading on real prices
 
 ```bash
-export ALPACA_API_KEY_ID=... ALPACA_API_SECRET_KEY=...       # free account; market data only here
+# IB Gateway running, logged in to the paper account (port 4002)
 python main.py paper --candidates "anthropic:claude-sonnet-4-6@Balanced,openai:gpt-5.5@Aggressive" \
                      --symbols SPY,QQQ,IWM,TLT,GLD --capital 100000
 # then once per trading day after the close (cron), with no --candidates:
@@ -67,6 +87,8 @@ python main.py paper --symbols SPY,QQQ,IWM,TLT,GLD
 python main.py promote --symbols SPY,QQQ,IWM,TLT,GLD        # after >= 40 days
 ```
 
+* The virtual portfolios in this stage are tracked by StockAgent itself. IBKR only supplies prices, so every
+  candidate competes on identical terms without needing a separate account each.
 * Decisions are made after day *t*'s close. Fills are evaluated on day *t+1*'s bar: at the open if the order
   is marketable, otherwise at the limit if the day's range reaches it. Fees and slippage apply, and nothing
   can see the future.
@@ -88,13 +110,16 @@ python main.py promote --symbols SPY,QQQ,IWM,TLT,GLD        # after >= 40 days
 
 ## Stage 3: the champion gets a budget
 
-1. Open a **dedicated** brokerage account (or sub-account) and fund it with the budget only. The runner
-   refuses to trade an account worth more than 1.5× the budget.
-2. Run the champion in the Alpaca *paper* account first. This checks real order plumbing:
-   `python main.py live --budget 10000`.
-3. A human reviews the evidence and edits `champion.json`, setting `approved_by` and `approved_budget`.
-4. Run `STOCKAGENT_LIVE=1 python main.py live --budget 10000 --real-money`. Every order asks for `y/N`
-   confirmation unless `--no-confirm` is given.
+1. **Rehearse in the IBKR paper account** (DU…, port 4002) for a couple of weeks. This exercises real order
+   routing, partial fills and rejections. IBKR paper accounts start with about $1M of simulated money, so
+   first reset the paper balance to your intended budget (Paper Trading Account settings). The runner refuses
+   any account worth more than 1.5× the budget. Command: `python main.py live --budget 10000`.
+2. **Dedicated real-money account.** Fund a separate IBKR account with the budget only. An IBKR Pro client
+   can open linked additional accounts. Set `IBKR_ACCOUNT` to its ID.
+3. **Human sign-off.** Edit `champion.json`, setting `approved_by` and `approved_budget`.
+4. **Go live.** Run `STOCKAGENT_LIVE=1 python main.py live --budget 10000 --real-money` (Gateway on port 4001).
+   Every order asks for `y/N` confirmation unless `--no-confirm` is given. The live Gateway needs periodic
+   re-login with 2FA, so a human stays in the loop anyway.
 
 The LLM never holds the keys. Every order passes `validate_order` and then `RiskGate`, and the budget is
 enforced by the account itself. None of this is investment advice. Check the rules for automated trading in
@@ -146,7 +171,7 @@ stockagent/policies.py     Observation, validation, LLMPolicy, baselines
 stockagent/llm.py          openai/anthropic/gemini/deepseek/gateway/mock clients
 stockagent/simulation.py   day loop (paper Fig. 2)
 stockagent/league.py       stage 1 league + qualification
-stockagent/live/           feeds, VirtualPortfolio + Alpaca broker, RiskGate, paper league, promotion, live step
+stockagent/live/           feeds, VirtualPortfolio, IBKR + Alpaca brokers, RiskGate, paper league, promotion, live step
 ```
 
 ## Citation

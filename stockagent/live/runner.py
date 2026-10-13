@@ -27,7 +27,7 @@ from typing import Callable, Dict, List, Optional
 from .. import config, metrics
 from ..llm import LLMClient
 from ..policies import LLMPolicy, Observation, Policy, make_policy, validate_order
-from .brokers import AlpacaBroker, VirtualPortfolio
+from .brokers import VirtualPortfolio
 from .feeds import Feed
 from .risk import RiskGate, RiskLimits, RiskState
 
@@ -233,7 +233,7 @@ class PaperLeague:
 # ---------------------------------------------------------------------------
 # Stage 3: live (or broker-paper) trading for the approved champion
 # ---------------------------------------------------------------------------
-def live_step(champion_path: str, state_path: str, feed: Feed, broker: AlpacaBroker, budget: float,
+def live_step(champion_path: str, state_path: str, feed: Feed, broker, budget: float,
               confirm: Callable[[dict], bool], limits: Optional[dict] = None, temperature: Optional[float] = None,
               orders_per_day: int = 3) -> List[dict]:
     with open(champion_path, encoding="utf-8") as fh:

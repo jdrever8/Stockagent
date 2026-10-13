@@ -245,3 +245,82 @@ def test_live_requires_signoff(tmp_path, monkeypatch):
     live_step(str(champ), str(tmp_path / "s.json"), feed, broker, 10_000, lambda o: True)
     for sym, side, qty, limit in broker.orders:
         assert qty * limit <= 10_000 * 0.10 + 1e-6
+
+
+# --- IBKR adapter (fake connection; no gateway needed) ----------------------------
+from types import SimpleNamespace as NS  # noqa: E402
+
+from stockagent.live.ibkr import IBKRBroker, IBKRFeed, is_paper_account  # noqa: E402
+
+
+class FakeIB:
+    def __init__(self, account="DU123", equity=10_000.0):
+        self.account, self.equity = account, equity
+        self.placed, self.cancelled = [], []
+        self.open = [NS(order=NS(account=account, orderRef="sa-old", orderId=1)),
+                     NS(order=NS(account=account, orderRef="manual", orderId=2))]
+
+    def managedAccounts(self):
+        return [self.account]
+
+    def accountSummary(self, account):
+        return [NS(tag="NetLiquidation", value=str(self.equity), currency="USD"),
+                NS(tag="TotalCashValue", value=str(self.equity), currency="USD"),
+                NS(tag="AvailableFunds", value=str(self.equity), currency="USD")]
+
+    def positions(self, account):
+        return [NS(contract=NS(symbol="SPY", secType="STK"), position=3.0)]
+
+    def openTrades(self):
+        return self.open
+
+    def cancelOrder(self, order):
+        self.cancelled.append(order.orderRef)
+
+    def qualifyContracts(self, c):
+        return [c]
+
+    def placeOrder(self, contract, order):
+        self.placed.append((contract.symbol, order.action, order.totalQuantity, order.lmtPrice, order.tif,
+                            order.orderRef, order.account))
+        return NS(order=NS(orderId=99), orderStatus=NS(status="Submitted"))
+
+    def sleep(self, s):
+        pass
+
+    def reqHistoricalData(self, contract, **kw):
+        import datetime as _dt
+        return [NS(date=_dt.date(2026, 1, d), open=1, high=2, low=0.5, close=1.5, volume=10) for d in (2, 5, 6)]
+
+
+def test_ibkr_paper_live_account_guard():
+    assert is_paper_account("DU1234567") and not is_paper_account("U1234567")
+    with pytest.raises(PermissionError):
+        IBKRBroker(live=False, ib=FakeIB("U999"))   # paper mode must not touch a live account
+    with pytest.raises(PermissionError):
+        IBKRBroker(live=True, ib=FakeIB("DU999"))   # real-money mode on a paper login is a mistake
+    with pytest.raises(RuntimeError):
+        IBKRBroker(live=False, ib=FakeIB("DU1"), account="DU2")
+
+
+def test_ibkr_broker_orders_and_cancel():
+    pytest.importorskip("ib_async")
+    ib = FakeIB()
+    b = IBKRBroker(live=False, ib=ib)
+    assert b.account()["equity"] == 10_000 and b.positions() == {"SPY": 3}
+    b.cancel_all()
+    assert ib.cancelled == ["sa-old"]           # manual orders are left alone
+    res = b.submit_limit("SPY", "buy", 5, 101.234, "sa-x")
+    assert res == {"id": 99, "status": "Submitted"}
+    assert ib.placed == [("SPY", "BUY", 5, 101.23, "DAY", "sa-x", "DU123")]
+
+
+def test_ibkr_feed_and_live_step(tmp_path, monkeypatch):
+    pytest.importorskip("ib_async")
+    ib = FakeIB()
+    feed = IBKRFeed(["SPY"], ib=ib)
+    assert feed.dates() == ["2026-01-02", "2026-01-05", "2026-01-06"]
+    champ = tmp_path / "champion.json"
+    champ.write_text(json.dumps({"candidate": "mock:a", "approved_by": None, "approved_budget": None}))
+    live_step(str(champ), str(tmp_path / "s.json"), feed, IBKRBroker(live=False, ib=ib), 10_000, lambda o: True)
+    assert all(p[6] == "DU123" and p[2] * p[3] <= 1_000 + 1e-6 for p in ib.placed)
