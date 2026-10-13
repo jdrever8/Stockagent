@@ -51,6 +51,10 @@ ROSTER: List[AgentSpec] = [
     AgentSpec("chartist", "discretionary",
               "Technical swing trading: breakouts, support and resistance, moving averages, volume and momentum "
               "divergences, with disciplined exits."),
+    AgentSpec("speculative", "discretionary",
+              "Asymmetric, high-volatility bets for outsized returns: leveraged ETPs, high-beta growth and "
+              "momentum names, bitcoin-proxy equities and small caps. Concentrated, cuts losers fast, lets "
+              "winners run, rotates into whatever has the most upside."),
 ]
 
 GLOBAL_TRACKER = "VWRP.L"   # Vanguard FTSE All-World UCITS (accumulating, GBP line)

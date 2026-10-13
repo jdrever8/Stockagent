@@ -131,7 +131,7 @@ def fetch_history(symbol: str, rng: str = "2y") -> Tuple[List[Tuple[str, float]]
 # ---------------------------------------------------------------------------
 # ISA instruments. Derivatives, crypto, margin and short positions can't be held in an ISA;
 # US-domiciled ETFs have no UK KID so UK platforms won't sell them (use the UCITS .L line).
-INSTRUMENTS = ("share", "etf", "investment_trust", "aim", "gilt", "foreign_share")
+INSTRUMENTS = ("share", "etf", "etp", "investment_trust", "aim", "gilt", "foreign_share", "crypto_etn")
 STAMP_DUTY = 0.005          # SDRT on purchases of UK-incorporated shares and investment trusts
 FX_FEE = 0.0015             # typical low-cost ISA platform FX charge on non-GBP trades
 
@@ -205,6 +205,8 @@ class Book:
             raise ValueError("quantity must be positive")
         if instrument not in INSTRUMENTS:
             raise ValueError(f"instrument must be one of {INSTRUMENTS}")
+        if d.get("isa") and instrument == "crypto_etn":
+            raise ValueError("crypto ETNs left the stocks & shares ISA on 6 April 2026 (IFISA only)")
         if d.get("isa") and instrument == "etf" and not is_london(symbol):
             raise ValueError("US-domiciled ETFs can't be bought in a UK ISA; use the UCITS London listing")
         held = d["positions"].get(symbol, {}).get("qty", 0.0)

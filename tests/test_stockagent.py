@@ -430,6 +430,9 @@ def test_isa_book_rules_costs_and_elimination(tmp_path, monkeypatch):
         b.trade("buy", "AAPL", 1000)
     with pytest.raises(ValueError, match="US-domiciled"):
         b.trade("buy", "SPY", 1, instrument="etf")
+    with pytest.raises(ValueError, match="crypto ETNs"):
+        b.trade("buy", "VOD.L", 1, instrument="crypto_etn")
+    assert b.trade("buy", "VOD.L", 10, instrument="etp")["costs"]["stamp_duty"] == 0.0   # ETPs: no SDRT
     prices["AAPL"] = 220.0
     m = b.mark()
     aapl = next(r for r in m["positions"] if r["symbol"] == "AAPL")

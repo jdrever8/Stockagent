@@ -152,7 +152,7 @@ your jurisdiction before stage 3.
 
 ## The ISA agent game (live prices, tracked on paper)
 
-Seven agents start with £10,000 each under ISA rules. The full rules are in `paper/game/RULES.md`:
+Eight agents start with £10,000 each under ISA rules. The full rules are in `paper/game/RULES.md`:
 - ISA-eligible instruments only;
 - no margin, no shorting, no loans;
 - an agent whose funds reach zero loses;
@@ -169,6 +169,7 @@ The books, journals and `LEADERBOARD.md` live in `paper/game/` and are committed
 | macro | discretionary | top-down allocation from rates, inflation, growth, FX |
 | quality | discretionary | concentrated high-ROIC UK/US businesses at fair prices |
 | chartist | discretionary | technical swing trades |
+| speculative | discretionary | leveraged ETPs, high-beta growth, bitcoin proxies, small caps |
 
 Each check-in runs the following:
 

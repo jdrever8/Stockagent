@@ -122,7 +122,7 @@ def main(argv=None):
     q.add_argument("symbol")
     q.add_argument("qty", type=float)
     q.add_argument("--instrument", default="share",
-                   choices=["share", "etf", "investment_trust", "aim", "gilt", "foreign_share"])
+                   choices=["share", "etf", "etp", "investment_trust", "aim", "gilt", "foreign_share", "crypto_etn"])
     q.add_argument("--note", default="")
     q.add_argument("--price", type=float)
     q.add_argument("--currency")

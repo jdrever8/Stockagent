@@ -167,6 +167,16 @@
    "time": "2026-10-13T14:37:29+00:00",
    "equity": 9957.92,
    "cash": 413.31
+  },
+  {
+   "time": "2026-10-13T14:39:58+00:00",
+   "equity": 9966.15,
+   "cash": 413.31
+  },
+  {
+   "time": "2026-10-13T14:40:26+00:00",
+   "equity": 9976.5,
+   "cash": 413.31
   }
  ],
  "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice"

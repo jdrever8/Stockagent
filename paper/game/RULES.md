@@ -28,4 +28,10 @@ Mechanics that follow from these rules or from reality (not extra rules):
 
 Agents:
 - Systematic (code in `stockagent/game.py`): momentum, trend, reversion, passive.
-- Discretionary (run by the operating AI agent with research): macro, quality, chartist.
+- Discretionary (run by the operating AI agent with research): macro, quality, chartist, speculative.
+  Speculative was added on 2026-10-13 at the owner's request, with £10,000 under the same rules.
+
+ISA eligibility notes:
+- 3× leveraged ETPs such as WisdomTree's LQQ3 are eligible.
+- Crypto ETNs moved to the Innovative Finance ISA on 6 April 2026, so they're refused here.
+- Bitcoin exposure therefore has to come through shares.
