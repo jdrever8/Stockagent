@@ -90,6 +90,27 @@ def main(argv=None):
             p.add_argument("--min-days", type=int, default=40)
             p.add_argument("--out", default="res/champion.json")
 
+    p = sub.add_parser("book", help="agent paper trade: live prices, tracked on paper, no rules")
+    p.add_argument("--path", default="paper/agent_book.json")
+    bsub = p.add_subparsers(dest="book_cmd", required=True)
+    q = bsub.add_parser("init")
+    q.add_argument("--capital", type=float, default=10_000)
+    q.add_argument("--base", default="GBP")
+    q.add_argument("--fee", type=float, default=0.0, help="flat fee per trade in base currency")
+    q.add_argument("--force", action="store_true")
+    q = bsub.add_parser("quote")
+    q.add_argument("symbols", nargs="+", help="AAPL (US) or VOD.L (London)")
+    for side in ("buy", "sell"):
+        q = bsub.add_parser(side)
+        q.add_argument("symbol")
+        q.add_argument("qty", type=float)
+        q.add_argument("--price", type=float, help="manual price in the stock's currency (needs --source)")
+        q.add_argument("--fx", type=float, help="manual GBP per USD (needs --source)")
+        q.add_argument("--source", help="where a manual price came from")
+        q.add_argument("--note", default="", help="the agent's reasoning, kept in the ledger")
+    q = bsub.add_parser("status")
+    q.add_argument("--no-record", action="store_true")
+
     p = sub.add_parser("live")
     p.add_argument("--champion", default="res/champion.json")
     p.add_argument("--state", default="res/live_state.json")
@@ -152,6 +173,23 @@ def main(argv=None):
                   "To approve, a human edits approved_by and approved_budget in that file.")
         else:
             print("\nno candidate meets the promotion rules yet")
+
+    elif a.cmd == "book":
+        from stockagent.book import Book, fetch_quotes
+        if a.book_cmd == "init":
+            book = Book.init(a.path, a.capital, a.base, a.fee, force=a.force)
+            print(f"paper book opened at {a.path}: {a.capital:,.2f} {a.base} cash")
+        elif a.book_cmd == "quote":
+            quotes = fetch_quotes(a.symbols)
+            for s in a.symbols:
+                q = quotes.get(s.upper())
+                print(f"{s.upper()}: {q.price} {q.currency} ({q.source}, {q.time})" if q else f"{s.upper()}: no quote")
+        elif a.book_cmd in ("buy", "sell"):
+            entry = Book(a.path).trade(a.book_cmd, a.symbol, a.qty, price=a.price, source=a.source, fx=a.fx,
+                                       note=a.note)
+            print(json.dumps(entry, indent=2))
+        else:
+            print(json.dumps(Book(a.path).mark(record=not a.no_record), indent=2))
 
     elif a.cmd == "live":
         from stockagent.live.runner import live_step

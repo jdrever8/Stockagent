@@ -150,6 +150,23 @@ The LLM never holds the keys. Every order passes `validate_order` and then `Risk
 enforced by the account itself. None of this is investment advice. Check the rules for automated trading in
 your jurisdiction before stage 3.
 
+## Agent paper trade (no broker, no API keys)
+
+A standalone £10,000 paper book in `paper/agent_book.json`. Trades fill at live prices: Stooq first, then Yahoo,
+neither needing a key. US stocks are converted at live GBP/USD, and London prices in pence are converted to
+pounds. There are no rules: any symbol, any size, short selling allowed. The only limit is that buys can't spend
+more cash than the book holds. Every trade records its price source, quote time, FX rate and the agent's reasoning.
+
+```bash
+python main.py book quote AAPL VOD.L GBPUSD
+python main.py book buy AAPL 5 --note "why"
+python main.py book sell VOD.L 1000           # beyond holdings = short
+python main.py book status                    # mark to market, appends to the equity history
+```
+
+If no quote source is reachable, a trade can be entered with `--price` (and `--fx`), but it must carry a
+`--source` saying where the price came from.
+
 ## What changed from the original code
 
 The original repo could not produce valid results. The fixes:

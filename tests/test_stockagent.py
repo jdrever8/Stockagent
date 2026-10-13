@@ -395,3 +395,46 @@ def test_arena_simulation_runs_with_shorts(tmp_path):
 def test_limit_overrides_cannot_change_budget():
     lim = make_limits(10_000, ["X"], 3, {"budget": 1e9, "max_position_pct": 1.0, "max_orders_per_day": 10})
     assert lim.budget == 10_000 and lim.max_position_pct == 1.0 and lim.max_orders_per_day == 10
+
+
+# --- agent paper book ------------------------------------------------------------
+from stockagent import book as book_mod  # noqa: E402
+
+
+def fake_quotes(prices):
+    def fetch(symbols):
+        out = {}
+        for s in symbols:
+            s = s.upper()
+            if s in prices:
+                ccy = "USD" if s == "GBPUSD" else book_mod.currency_of(s)
+                out[s] = book_mod.Quote(s, prices[s], ccy, "t", "test")
+        return out
+    return fetch
+
+
+def test_book_gbp_ledger_with_fx_pence_and_shorts(tmp_path, monkeypatch):
+    prices = {"GBPUSD": 1.25, "AAPL": 200.0, "VOD.L": 0.80}
+    monkeypatch.setattr(book_mod, "fetch_quotes", fake_quotes(prices))
+    path = str(tmp_path / "b.json")
+    b = book_mod.Book.init(path, 10_000)
+    e = b.trade("buy", "AAPL", 10, note="test")
+    assert e["value_base"] == 1600.0 and b.data["cash"] == 8400.0          # 10 * 200 USD / 1.25
+    b.trade("buy", "VOD.L", 1000)                                          # 0.80 GBP each
+    assert b.data["cash"] == pytest.approx(7600.0)
+    with pytest.raises(ValueError):
+        b.trade("buy", "AAPL", 1000)                                       # budget is the only limit
+    b.trade("sell", "TSLA", 5, price=250.0, source="unit test", fx=0.8)   # short, manual price
+    assert b.data["positions"]["TSLA"]["qty"] == -5 and b.data["cash"] == pytest.approx(8600.0)
+    prices.update({"AAPL": 220.0, "TSLA": 200.0})
+    m = b.mark()
+    aapl = next(r for r in m["positions"] if r["symbol"] == "AAPL")
+    tsla = next(r for r in m["positions"] if r["symbol"] == "TSLA")
+    assert aapl["unrealised_pnl"] == pytest.approx(160.0)                   # +20 USD * 10 / 1.25
+    assert tsla["unrealised_pnl"] == pytest.approx(200.0)                   # short gained 50 USD*5 at 0.8
+    assert m["equity"] == pytest.approx(10_000 + 160 + 200 + 0)
+    e = b.trade("sell", "AAPL", 10)
+    assert e["realised_pnl"] == pytest.approx(160.0) and "AAPL" not in b.data["positions"]
+    assert len(book_mod.Book(path).data["trades"]) == 4
+    with pytest.raises(ValueError):
+        b.trade("buy", "MSFT", 1, price=100.0)                             # manual price needs a source
