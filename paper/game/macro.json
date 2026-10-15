@@ -4,7 +4,7 @@
  "base": "GBP",
  "start_capital": 10000.0,
  "created": "2026-10-13T14:29:58+00:00",
- "cash": 2009.6651429671572,
+ "cash": 1502.6051429671572,
  "fee_per_trade": 0.0,
  "isa": false,
  "eliminated": null,
@@ -44,6 +44,12 @@
    "cost_base": 1499.815,
    "currency": "GBP",
    "instrument": "etf"
+  },
+  "TGA.L": {
+   "qty": 81.0,
+   "cost_base": 507.06,
+   "currency": "GBP",
+   "instrument": "foreign_share"
   }
  },
  "trades": [
@@ -256,6 +262,27 @@
    "quote_time": "2026-10-13T15:35:23+00:00",
    "fx_source": "identity",
    "note": "#off-book ep.4: park S&P 500 proceeds in GBP money market"
+  },
+  {
+   "time": "2026-10-15T05:32:57+00:00",
+   "side": "buy",
+   "symbol": "TGA.L",
+   "instrument": "foreign_share",
+   "qty": 81,
+   "price": 6.26,
+   "currency": "GBP",
+   "fx_to_base": 1.0,
+   "value_base": 507.06,
+   "costs": {
+    "dealing": 0.0,
+    "stamp_duty": 0.0,
+    "fx": 0.0
+   },
+   "realised_pnl": 0.0,
+   "price_source": "yahoo",
+   "quote_time": "2026-10-14T15:48:48+00:00",
+   "fx_source": "identity",
+   "note": "Thungela research report (paper/game/research/thungela/macro.md): 5% energy-inflation satellite; net cash ~32% of mkt cap, H2 realised-price discount narrowing; MAC-2 applies"
   }
  ],
  "marks": [
@@ -328,10 +355,20 @@
    "time": "2026-10-13T17:52:16+00:00",
    "equity": 9999.18,
    "cash": 2009.67
+  },
+  {
+   "time": "2026-10-15T05:30:51+00:00",
+   "equity": 10029.11,
+   "cash": 2009.67
+  },
+  {
+   "time": "2026-10-15T05:33:07+00:00",
+   "equity": 10029.22,
+   "cash": 1502.61
   }
  ],
  "rules": "broke out of house rules: left the ISA wrapper (shorting, crypto ETNs, US ETFs allowed)",
- "interest_accrued_to": "2026-10-13T17:52:12+00:00",
+ "interest_accrued_to": "2026-10-15T05:33:04+00:00",
  "breakouts": [
   {
    "time": "2026-10-13T16:58:58+00:00",

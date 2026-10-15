@@ -259,6 +259,16 @@
    "time": "2026-10-13T17:52:26+00:00",
    "equity": 9952.63,
    "cash": 578.99
+  },
+  {
+   "time": "2026-10-15T05:30:59+00:00",
+   "equity": 10036.05,
+   "cash": 578.99
+  },
+  {
+   "time": "2026-10-15T05:33:15+00:00",
+   "equity": 10036.19,
+   "cash": 578.99
   }
  ],
  "rules": "ISA: ISA-eligible instruments only, no margin, no shorting, no loans; zero funds = eliminated; everything else is the agent's choice",
@@ -267,5 +277,5 @@
   "time": "2026-10-13T14:43:27+00:00",
   "reason": "owner replaced the agent most similar to another (trend held the same global tracker as passive)"
  },
- "interest_accrued_to": "2026-10-13T17:52:23+00:00"
+ "interest_accrued_to": "2026-10-15T05:33:12+00:00"
 }
